@@ -23,7 +23,7 @@ Personal agent skills for AI coding assistants.
 ## Installation
 
 ```bash
-# direnv (devShell + waza CLI in PATH)
+# direnv (devShell + waza CLI + waza skill deploy)
 direnv allow
 
 # npx
@@ -31,9 +31,6 @@ npx skills add yutakobayashidev/skills
 
 # Claude Code
 /plugin marketplace add yutakobayashidev/skills
-
-# Local install (waza skill to .claude/skills/)
-nix run .#skills-install-local
 ```
 
 ## Waza
@@ -47,7 +44,7 @@ waza run         # run evals
 waza check       # validate skill readiness
 ```
 
-Full documentation: `.claude/skills/waza/SKILL.md` (after `skills-install-local`).
+Full documentation: `.claude/skills/waza/SKILL.md` (auto-deployed via `direnv allow`).
 
 ## License
 

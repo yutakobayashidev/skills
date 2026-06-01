@@ -62,13 +62,9 @@
             waza = inputs.nur-packages.packages.${system}.waza;
           };
 
-          apps.skills-install-local = {
-            type = "app";
-            program = "${agentLib.mkLocalInstallScript { inherit pkgs bundle; targets = localTargets; }}/bin/skills-install-local";
-          };
-
           devShells.default = pkgs.mkShell {
             packages = [ inputs.nur-packages.packages.${system}.waza ];
+            shellHook = agentLib.mkShellHook { inherit pkgs bundle; targets = localTargets; };
           };
         };
     };
