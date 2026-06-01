@@ -1,7 +1,7 @@
 name: Run Skill Evaluations
 
 on:
-  pull_request:
+  push:
     branches: [main]
     paths:
       - 'evals/**'
