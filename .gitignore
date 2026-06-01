@@ -2,4 +2,5 @@ results/
 .waza-cache/
 coverage.txt
 *.exe
-.claude/
+.claude/skills/waza/
+.pre-commit-config.yaml
