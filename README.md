@@ -43,9 +43,45 @@ git clone https://github.com/yutakobayashidev/skills
 cp -r skills/skills/* ~/.claude/skills/
 ```
 
-### Nix (Home Manager)
+### Nix (agent-skills-nix)
 
-This repository is consumed as a flake input by [dotnix](https://github.com/yutakobayashidev/dotnix) via [agent-skills-nix](https://github.com/Kyure-A/agent-skills-nix). Skills are deployed to `~/.agents/skills`, `~/.config/claude/skills`, and `~/.config/codex/skills` automatically.
+Consume this repository via [agent-skills-nix](https://github.com/Kyure-A/agent-skills-nix) for declarative skill management with automatic deployment to multiple agents.
+
+```nix
+# flake.nix
+{
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    agent-skills = {
+      url = "github:Kyure-A/agent-skills-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    skills = {
+      url = "github:yutakobayashidev/skills";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  # Pass to home-manager as extraSpecialArgs, then:
+  home-manager.users.youruser = {
+    programs.agent-skills = {
+      enable = true;
+      sources.local = {
+        path = inputs.skills;
+        subdir = "skills";
+      };
+      # Deploy to agents
+      targets = {
+        claude.enable = true;
+        codex.enable = true;
+        agents.enable = true;
+      };
+    };
+  };
+}
+```
+
+Skills are deployed to `~/.agents/skills`, `~/.config/claude/skills`, and `~/.config/codex/skills`. See [dotnix](https://github.com/yutakobayashidev/dotnix) for a complete reference setup.
 
 ## Packages
 
