@@ -83,11 +83,25 @@ Consume this repository via [agent-skills-nix](https://github.com/Kyure-A/agent-
 
 Skills are deployed to `~/.agents/skills`, `~/.config/claude/skills`, and `~/.config/codex/skills`. See [dotnix](https://github.com/yutakobayashidev/dotnix) for a complete reference setup.
 
+### Local Install (waza skill)
+
+Install the waza skill (from [microsoft/waza](https://github.com/microsoft/waza/blob/main/skills/waza/SKILL.md)) to `.claude/skills/` without home-manager:
+
+```bash
+nix run github:yutakobayashidev/skills#skills-install-local
+```
+
+This uses [agent-skills-nix](https://github.com/Kyure-A/agent-skills-nix) for a local-scope install — useful when you want the waza skill for evaluating other skills without adding it to your global agent configuration.
+
 ## Packages
 
 The flake also provides:
 
 - **waza**: CLI and framework for evaluating AI agent skills ([Microsoft/waza](https://github.com/microsoft/waza)), re-exported from [yutakobayashidev/nur-packages](https://github.com/yutakobayashidev/nur-packages).
+
+## Apps
+
+- **skills-install-local**: Install selected skills (waza) to `.claude/skills/` via `agent-skills-nix` local install.
 
 ## License
 

@@ -1,0 +1,129 @@
+{
+  "nodes": {
+    "agent-skills": {
+      "inputs": {
+        "home-manager": "home-manager",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1779957311,
+        "narHash": "sha256-ay1wGiKQIGIcFpSxlutpoAlsPVerbVhDUXtmaDVLz+o=",
+        "owner": "Kyure-A",
+        "repo": "agent-skills-nix",
+        "rev": "df7a6e0fa87655cf28369781232d153c1c7b55ca",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Kyure-A",
+        "repo": "agent-skills-nix",
+        "type": "github"
+      }
+    },
+    "flake-parts": {
+      "inputs": {
+        "nixpkgs-lib": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1778716662,
+        "narHash": "sha256-m1Yf0wZ8j1OHjTc2UwHwyQRSnNeSgLJOd7q5Y45hzi4=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "f7c1a2d347e4c52d5fb8d10cb4d94b5884e546fb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "home-manager": {
+      "inputs": {
+        "nixpkgs": [
+          "agent-skills",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1779678629,
+        "narHash": "sha256-gHcIFg0mm+KFsg7iZQt67kni3+qR5U3PhEC9P7vKlZ4=",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "612bbe3b405ad5f71d7bf9edecc04b678a061652",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1779560665,
+        "narHash": "sha256-tpyBcxPpcQb8ukyNF7DoCwfSY3VPsxHoYwj00Cayv5o=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "64c08a7ca051951c8eae34e3e3cb1e202fe36786",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nur-packages": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1780331348,
+        "narHash": "sha256-IAEeQnezkS4KgZkoKzcBPhr2j41weUN0BYUvRqbR5Bk=",
+        "owner": "yutakobayashidev",
+        "repo": "nur-packages",
+        "rev": "755b617e41c3f78e9e87d00b7c0d9e8feaa3282e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "yutakobayashidev",
+        "repo": "nur-packages",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "agent-skills": "agent-skills",
+        "flake-parts": "flake-parts",
+        "nixpkgs": "nixpkgs",
+        "nur-packages": "nur-packages",
+        "waza-skill": "waza-skill"
+      }
+    },
+    "waza-skill": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1780335268,
+        "narHash": "sha256-btzie5ayOuixilYQbsKuQqWscN+mDHcLVMM4Dp/ns3A=",
+        "owner": "microsoft",
+        "repo": "waza",
+        "rev": "818d7e8314aedecf38e32670a87959eb547d4d63",
+        "type": "github"
+      },
+      "original": {
+        "owner": "microsoft",
+        "repo": "waza",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
