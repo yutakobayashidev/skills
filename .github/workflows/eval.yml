@@ -10,7 +10,6 @@ on:
       - "flake.lock"
 
 permissions:
-  id-token: write
   contents: read
 
 jobs:
