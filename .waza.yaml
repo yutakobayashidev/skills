@@ -5,7 +5,7 @@ paths:
   evals: evals/
   results: results/
 defaults:
-  engine: copilot-sdk
+  engine: mock
   model: claude-sonnet-4.6
   timeout: 300
   parallel: false
