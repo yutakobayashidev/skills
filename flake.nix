@@ -39,7 +39,7 @@
           sources = {
             waza = {
               path = inputs.waza-skill;
-              subdir = "skills/waza";
+              subdir = "skills";
             };
           };
 
