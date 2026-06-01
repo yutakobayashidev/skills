@@ -6,7 +6,7 @@ tags:
 inputs:
   prompt: Review this component for cohesion. Does it need changes?
   files:
-  - path: orders.ts
+  - path: UserProfile.tsx
 expected:
   outcomes:
   - type: task_completed

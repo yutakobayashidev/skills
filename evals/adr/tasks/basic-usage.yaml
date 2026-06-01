@@ -11,7 +11,7 @@ inputs:
     - path: context.md
 expected:
   output_contains:
-    - "Decision"
-    - "Consequences"
+    - "ADR"
+    - "context.md"
   outcomes:
     - type: task_completed

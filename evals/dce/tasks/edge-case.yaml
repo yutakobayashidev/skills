@@ -6,7 +6,7 @@ tags:
 inputs:
   prompt: Check for dead code in this file.
   files:
-  - path: orders.ts
+  - path: all-used.ts
 expected:
   outcomes:
   - type: task_completed

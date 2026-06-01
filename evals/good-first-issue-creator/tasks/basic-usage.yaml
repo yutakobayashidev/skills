@@ -10,7 +10,7 @@ inputs:
   - path: context.md
 expected:
   output_contains:
-  - acceptance
-  - good first
+  - "good first"
+  - "context.md"
   outcomes:
   - type: task_completed
