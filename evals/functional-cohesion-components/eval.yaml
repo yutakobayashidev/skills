@@ -3,10 +3,10 @@ description: Evaluation suite for functional-cohesion-components.
 skill: functional-cohesion-components
 version: "1.0"
 config:
+  executor: mock
   trials_per_task: 1
   timeout_seconds: 300
   parallel: false
-  executor: copilot-sdk
   model: claude-sonnet-4.6
 metrics:
   - name: task_completion
