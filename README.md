@@ -4,21 +4,21 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 
 ## Skills
 
-| Skill | Description |
-|-------|-------------|
-| [adr](skills/adr) | Draft or refine architecture decision records |
-| [check-similarity](skills/check-similarity) | Detect duplicate TypeScript/JavaScript code using AST comparison |
-| [dce](skills/dce) | Detect and eliminate dead code in TypeScript projects |
-| [functional-cohesion-components](skills/functional-cohesion-components) | Guide frontend component design using functional cohesion |
-| [gha-lint](skills/gha-lint) | Lint and secure GitHub Actions workflows |
-| [good-first-issue-creator](skills/good-first-issue-creator) | Draft newcomer-friendly GitHub issues |
-| [markitdown](skills/markitdown) | Convert files to Markdown using Microsoft's markitdown CLI |
-| [nextjs-onboarding](skills/nextjs-onboarding) | Audit baseline repo hygiene when joining a Next.js project |
-| [oura-daily-watch](skills/oura-daily-watch) | Build and run a daily Oura + Discord behavior monitor |
-| [repo-creator](skills/repo-creator) | Create new GitHub repositories through OpenTofu |
-| [social-digest](skills/social-digest) | Fetch and summarize Discord + Mastodon posts |
-| [speakerdeck](skills/speakerdeck) | Download slide images from a SpeakerDeck presentation |
-| [youtube-transcript](skills/youtube-transcript) | Extract transcripts from YouTube videos |
+| Skill                                                                   | Description                                                      |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| [adr](skills/adr)                                                       | Draft or refine architecture decision records                    |
+| [check-similarity](skills/check-similarity)                             | Detect duplicate TypeScript/JavaScript code using AST comparison |
+| [dce](skills/dce)                                                       | Detect and eliminate dead code in TypeScript projects            |
+| [functional-cohesion-components](skills/functional-cohesion-components) | Guide frontend component design using functional cohesion        |
+| [gha-lint](skills/gha-lint)                                             | Lint and secure GitHub Actions workflows                         |
+| [good-first-issue-creator](skills/good-first-issue-creator)             | Draft newcomer-friendly GitHub issues                            |
+| [markitdown](skills/markitdown)                                         | Convert files to Markdown using Microsoft's markitdown CLI       |
+| [nextjs-onboarding](skills/nextjs-onboarding)                           | Audit baseline repo hygiene when joining a Next.js project       |
+| [oura-daily-watch](skills/oura-daily-watch)                             | Build and run a daily Oura + Discord behavior monitor            |
+| [repo-creator](skills/repo-creator)                                     | Create new GitHub repositories through OpenTofu                  |
+| [social-digest](skills/social-digest)                                   | Fetch and summarize Discord + Mastodon posts                     |
+| [speakerdeck](skills/speakerdeck)                                       | Download slide images from a SpeakerDeck presentation            |
+| [youtube-transcript](skills/youtube-transcript)                         | Extract transcripts from YouTube videos                          |
 
 ## Installation
 
@@ -87,22 +87,50 @@ Skills are deployed to `~/.agents/skills`, `~/.config/claude/skills`, and `~/.co
 direnv allow
 ```
 
-Installs the waza skill to `.claude/skills/` and adds `waza` CLI to PATH via devShell.
+Installs agent skills to `.agents/skills/`, `.claude/skills/`, etc. and adds `waza`, `actrun`, and `nodejs` to PATH via devShell.
 
-## Waza
+## Development
 
-Evaluate AI agent skills. Available in PATH after `direnv allow`.
+### Run evals locally
 
 ```bash
-waza init        # scaffold project
-waza new skill   # create skill + eval
-waza run         # run evals
-waza check       # validate skill readiness
+# All skills (mock engine)
+waza run
+
+# Single skill (mock engine)
+waza run youtube-transcript
+
+# Single skill with real model (requires copilot login)
+waza run youtube-transcript --model gpt-5-mini --executor copilot-sdk
+```
+
+### Run CI workflow locally (actrun)
+
+Prerequisites: [actrun](https://github.com/myuron/actrun-overlay) in PATH (available after `direnv allow`).
+
+```bash
+# Run the full CI pipeline locally
+actrun workflow run .github/workflows/eval.yml --trust
+
+# Re-run failed jobs from last run
+actrun run --retry
+
+# View run logs
+actrun run logs <run-id>
+```
+
+Note: Some GitHub Actions runner environment variables (`RUNNER_TOOL_CACHE`) are not fully emulated by actrun. The CI workflow passes on GitHub Actions.
+
+### Trigger CI manually (workflow_dispatch)
+
+```bash
+gh workflow run eval.yml --ref main
 ```
 
 ## Packages
 
 - **waza**: waza CLI, re-exported from [yutakobayashidev/nur-packages](https://github.com/yutakobayashidev/nur-packages).
+- **actrun**: Local GitHub Actions runner, from [myuron/actrun-overlay](https://github.com/myuron/actrun-overlay).
 
 ## License
 
