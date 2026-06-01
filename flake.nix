@@ -7,6 +7,10 @@
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
+    nur-packages = {
+      url = "github:yutakobayashidev/nur-packages";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -19,10 +23,10 @@
       ];
 
       perSystem =
-        { pkgs, ... }:
+        { system, ... }:
         {
           packages = {
-            waza = pkgs.callPackage ./pkgs/waza { };
+            waza = inputs.nur-packages.packages.${system}.waza;
           };
         };
     };
