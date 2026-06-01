@@ -4,8 +4,10 @@ on:
   push:
     branches: [main]
     paths:
-      - 'evals/**'
-      - 'skills/**'
+      - "evals/**"
+      - "skills/**"
+      - "flake.nix"
+      - "flake.lock"
 
 permissions:
   contents: read
@@ -14,23 +16,17 @@ jobs:
   eval:
     name: Run Evaluations
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           persist-credentials: false
-      - name: Setup Go
-        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+      - uses: cachix/install-nix-action@2126ae7fc54c9df00dd18f7f18754393182c73cd # v31.9.1
         with:
-          go-version: '1.26'
-      - name: Install waza
-        run: go install github.com/microsoft/waza/cmd/waza@latest
+          github_access_token: ${{ github.token }}
+      - uses: cachix/cachix-action@3ba601ff5bbb07c7220846facfa2cd81eeee15a1 # v16
+        with:
+          name: numtide
+          skipPush: true
       - name: Run evaluations
-        run: waza run --output-dir ./results
-      - name: Upload results
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: eval-results
-          path: ./results
-          retention-days: 30
+        run: nix run .#waza -- run --output-dir ./results
