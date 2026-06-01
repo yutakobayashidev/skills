@@ -1,14 +1,14 @@
 id: youtube-transcript-003
 name: Should Not Trigger
-description: Unrelated request.
+description: Unrelated request should not trigger the skill.
 tags:
-- anti-trigger
-- negative-test
+  - anti-trigger
+  - negative-test
 inputs:
   prompt: What is the weather today?
 expected:
   output_not_contains:
-  - transcript
-  - youtube
-  - caption
-  - video
+    - transcript
+    - youtube
+    - caption
+    - video

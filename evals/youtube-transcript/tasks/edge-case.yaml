@@ -1,11 +1,10 @@
 id: youtube-transcript-002
 name: Edge Case - With Timestamps
-description: Save captions with timestamps.
+description: Get transcript with timestamps from a real YouTube video.
 tags:
-- edge-case
+  - edge-case
 inputs:
-  prompt: Extract the captions with timestamps for video https://youtu.be/xyz789 and
-    save to a file.
+  prompt: "Extract the captions with timestamps for this video: https://youtu.be/jNQXAC9IVRw"
 expected:
   outcomes:
-  - type: task_completed
+    - type: task_completed

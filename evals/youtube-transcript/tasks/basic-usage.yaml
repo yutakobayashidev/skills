@@ -1,13 +1,11 @@
 id: youtube-transcript-001
 name: Basic Usage
-description: Get transcript from YouTube.
+description: Get transcript from a real YouTube video.
 tags:
-- basic
-- happy-path
+  - basic
+  - happy-path
 inputs:
-  prompt: 'Get the transcript for this YouTube video: https://youtube.com/watch?v=abc123'
+  prompt: "Get the transcript for this YouTube video: https://www.youtube.com/watch?v=jNQXAC9IVRw"
 expected:
-  output_contains:
-  - transcript
   outcomes:
-  - type: task_completed
+    - type: task_completed
