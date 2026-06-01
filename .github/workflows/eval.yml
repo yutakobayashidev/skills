@@ -16,15 +16,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install Azure Developer CLI
-        uses: Azure/setup-azd@v2
-      - name: Install waza extension
-        run: |
-          azd config set alpha.extensions on
-          azd ext source add -n waza -t url -l https://raw.githubusercontent.com/microsoft/waza/main/registry.json
-          azd ext install microsoft.azd.waza
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+      - name: Install waza
+        run: go install github.com/microsoft/waza/cmd/waza@latest
       - name: Run evaluations
-        run: azd waza run --output-dir ./results
+        run: waza run --engine mock --output-dir ./results
       - name: Upload results
         if: always()
         uses: actions/upload-artifact@v4
