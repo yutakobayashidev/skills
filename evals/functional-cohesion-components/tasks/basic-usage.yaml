@@ -1,16 +1,16 @@
-id: basic-usage-001
+id: functional-cohesion-components-001
 name: Basic Usage
-description: |
-  Test that the skill handles a typical request correctly.
+description: Review a component with multiple concerns.
 tags:
-  - basic
-  - happy-path
+- basic
+- happy-path
 inputs:
-  prompt: "Help me with this task"
+  prompt: Review this React component for functional cohesion. Should it be split?
   files:
-    - path: sample.py
+  - path: NotificationList.tsx
 expected:
   output_contains:
-    - "function"
+  - split
+  - cohesion
   outcomes:
-    - type: task_completed
+  - type: task_completed

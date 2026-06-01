@@ -1,11 +1,12 @@
-id: edge-case-001
-name: Edge Case - Empty Input
-description: |
-  Test that the skill handles edge cases gracefully.
+id: functional-cohesion-components-002
+name: Edge Case - Single Role
+description: Well-designed single-role component.
 tags:
-  - edge-case
+- edge-case
 inputs:
-  prompt: ""
+  prompt: Review this component for cohesion. Does it need changes?
+  files:
+  - path: orders.ts
 expected:
   outcomes:
-    - type: task_completed
+  - type: task_completed

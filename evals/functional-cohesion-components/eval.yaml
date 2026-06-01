@@ -1,28 +1,25 @@
 name: functional-cohesion-components-eval
-description: Evaluation suite for functional-cohesion-components.
 skill: functional-cohesion-components
-version: "1.0"
+version: '1.0'
 config:
-  executor: mock
   trials_per_task: 1
   timeout_seconds: 300
   parallel: false
+  executor: mock
   model: claude-sonnet-4.6
 metrics:
-  - name: task_completion
-    weight: 1.0
-    threshold: 0.8
-    description: Did the skill complete the assigned task?
+- name: task_completion
+  weight: 1.0
+  threshold: 0.8
+  description: Did the skill complete the assigned task?
 graders:
-  - type: code
-    name: has_output
-    config:
-      assertions:
-        - "len(output) > 0"
-  - type: text
-    name: relevant_content
-    config:
-      regex_match:
-        - "(?i)(explain|describe|analyze|implement)"
+- type: text
+  config:
+    regex_match:
+    - (?i)(cohesion|split|merge|component|role|concern)
+- type: code
+  config:
+    assertions:
+    - len(output) > 0
 tasks:
-  - "tasks/*.yaml"
+- tasks/*.yaml

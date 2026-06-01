@@ -1,16 +1,15 @@
-id: basic-usage-001
+id: markitdown-001
 name: Basic Usage
-description: |
-  Test that the skill handles a typical request correctly.
+description: Convert a file to markdown.
 tags:
-  - basic
-  - happy-path
+- basic
+- happy-path
 inputs:
-  prompt: "Help me with this task"
+  prompt: Convert this Python file to Markdown documentation.
   files:
-    - path: sample.py
+  - path: sample.py
 expected:
   output_contains:
-    - "function"
+  - markdown
   outcomes:
-    - type: task_completed
+  - type: task_completed

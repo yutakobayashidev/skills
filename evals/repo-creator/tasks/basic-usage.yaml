@@ -1,16 +1,16 @@
-id: basic-usage-001
+id: repo-creator-001
 name: Basic Usage
-description: |
-  Test that the skill handles a typical request correctly.
+description: Create a new repository.
 tags:
-  - basic
-  - happy-path
+- basic
+- happy-path
 inputs:
-  prompt: "Help me with this task"
+  prompt: Create a new repo called 'my-api-service' using the standard workflow.
   files:
-    - path: sample.py
+  - path: workflow.md
 expected:
   output_contains:
-    - "function"
+  - repo
+  - create
   outcomes:
-    - type: task_completed
+  - type: task_completed

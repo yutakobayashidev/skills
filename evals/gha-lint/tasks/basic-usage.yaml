@@ -1,16 +1,15 @@
-id: basic-usage-001
+id: gha-lint-001
 name: Basic Usage
-description: |
-  Test that the skill handles a typical request correctly.
+description: Lint a GitHub Actions workflow.
 tags:
-  - basic
-  - happy-path
+- basic
+- happy-path
 inputs:
-  prompt: "Help me with this task"
+  prompt: Check this workflow file for security issues with actionlint and pinact.
   files:
-    - path: sample.py
+  - path: ci.yml
 expected:
   output_contains:
-    - "function"
+  - checkout
   outcomes:
-    - type: task_completed
+  - type: task_completed

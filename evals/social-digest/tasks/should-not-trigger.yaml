@@ -1,13 +1,14 @@
-id: should-not-trigger-001
+id: social-digest-003
 name: Should Not Trigger
-description: |
-  Test that the skill does NOT activate on unrelated prompts.
-  This validates trigger specificity.
+description: Unrelated request.
 tags:
-  - anti-trigger
-  - negative-test
+- anti-trigger
+- negative-test
 inputs:
-  prompt: "What is the weather today?"
+  prompt: What is the weather today?
 expected:
   output_not_contains:
-    - "skill activated"
+  - discord
+  - mastodon
+  - digest
+  - summar

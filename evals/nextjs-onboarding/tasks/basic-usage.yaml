@@ -1,16 +1,17 @@
-id: basic-usage-001
+id: nextjs-onboarding-001
 name: Basic Usage
-description: |
-  Test that the skill handles a typical request correctly.
+description: Audit a Next.js project setup.
 tags:
-  - basic
-  - happy-path
+- basic
+- happy-path
 inputs:
-  prompt: "Help me with this task"
+  prompt: Audit this Next.js project for hygiene issues.
   files:
-    - path: sample.py
+  - path: package.json
+  - path: next.config.js
 expected:
   output_contains:
-    - "function"
+  - package.json
+  - hygiene
   outcomes:
-    - type: task_completed
+  - type: task_completed

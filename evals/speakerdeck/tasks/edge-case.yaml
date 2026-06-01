@@ -1,11 +1,10 @@
-id: edge-case-001
-name: Edge Case - Empty Input
-description: |
-  Test that the skill handles edge cases gracefully.
+id: speakerdeck-002
+name: Edge Case - Private URL
+description: Handle a non-standard SpeakerDeck URL.
 tags:
-  - edge-case
+- edge-case
 inputs:
-  prompt: ""
+  prompt: 'Get the slides from this presentation: https://speakerdeck.com/example/private-talk'
 expected:
   outcomes:
-    - type: task_completed
+  - type: task_completed

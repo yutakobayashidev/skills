@@ -1,11 +1,12 @@
-id: edge-case-001
-name: Edge Case - Empty Input
-description: |
-  Test that the skill handles edge cases gracefully.
+id: good-first-issue-creator-002
+name: Edge Case - Split Task
+description: Split a large feature into smaller good first issues.
 tags:
-  - edge-case
+- edge-case
 inputs:
-  prompt: ""
+  prompt: Split the CLI documentation task into smaller good first issues.
+  files:
+  - path: context.md
 expected:
   outcomes:
-    - type: task_completed
+  - type: task_completed

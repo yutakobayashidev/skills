@@ -1,16 +1,13 @@
-id: basic-usage-001
+id: youtube-transcript-001
 name: Basic Usage
-description: |
-  Test that the skill handles a typical request correctly.
+description: Get transcript from YouTube.
 tags:
-  - basic
-  - happy-path
+- basic
+- happy-path
 inputs:
-  prompt: "Help me with this task"
-  files:
-    - path: sample.py
+  prompt: 'Get the transcript for this YouTube video: https://youtube.com/watch?v=abc123'
 expected:
   output_contains:
-    - "function"
+  - transcript
   outcomes:
-    - type: task_completed
+  - type: task_completed

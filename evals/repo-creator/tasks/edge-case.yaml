@@ -1,11 +1,12 @@
-id: edge-case-001
-name: Edge Case - Empty Input
-description: |
-  Test that the skill handles edge cases gracefully.
+id: repo-creator-002
+name: Edge Case - Team Repo
+description: Create a monorepo with specific requirements.
 tags:
-  - edge-case
+- edge-case
 inputs:
-  prompt: ""
+  prompt: Create a monorepo for the platform team with GitHub pages enabled.
+  files:
+  - path: workflow.md
 expected:
   outcomes:
-    - type: task_completed
+  - type: task_completed

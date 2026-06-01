@@ -1,16 +1,14 @@
-id: basic-usage-001
+id: oura-daily-watch-001
 name: Basic Usage
-description: |
-  Test that the skill handles a typical request correctly.
+description: Create a daily wellness monitor.
 tags:
-  - basic
-  - happy-path
+- basic
+- happy-path
 inputs:
-  prompt: "Help me with this task"
-  files:
-    - path: sample.py
+  prompt: Set up a daily script that fetches Oura readiness data and posts to Discord.
 expected:
   output_contains:
-    - "function"
+  - oura
+  - discord
   outcomes:
-    - type: task_completed
+  - type: task_completed

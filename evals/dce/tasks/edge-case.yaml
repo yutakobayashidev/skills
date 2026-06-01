@@ -1,11 +1,12 @@
-id: edge-case-001
-name: Edge Case - Empty Input
-description: |
-  Test that the skill handles edge cases gracefully.
+id: dce-002
+name: Edge Case - All Used
+description: File with no dead code should report clean.
 tags:
-  - edge-case
+- edge-case
 inputs:
-  prompt: ""
+  prompt: Check for dead code in this file.
+  files:
+  - path: orders.ts
 expected:
   outcomes:
-    - type: task_completed
+  - type: task_completed

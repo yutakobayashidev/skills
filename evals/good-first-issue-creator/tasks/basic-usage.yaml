@@ -1,16 +1,16 @@
-id: basic-usage-001
+id: good-first-issue-creator-001
 name: Basic Usage
-description: |
-  Test that the skill handles a typical request correctly.
+description: Create a good first issue from repo context.
 tags:
-  - basic
-  - happy-path
+- basic
+- happy-path
 inputs:
-  prompt: "Help me with this task"
+  prompt: Create a good first issue for adding tests to the config parser.
   files:
-    - path: sample.py
+  - path: context.md
 expected:
   output_contains:
-    - "function"
+  - acceptance
+  - good first
   outcomes:
-    - type: task_completed
+  - type: task_completed

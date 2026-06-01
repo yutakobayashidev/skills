@@ -1,16 +1,13 @@
-id: basic-usage-001
+id: speakerdeck-001
 name: Basic Usage
-description: |
-  Test that the skill handles a typical request correctly.
+description: Download slides from SpeakerDeck.
 tags:
-  - basic
-  - happy-path
+- basic
+- happy-path
 inputs:
-  prompt: "Help me with this task"
-  files:
-    - path: sample.py
+  prompt: 'Download all slides from this SpeakerDeck presentation: https://speakerdeck.com/example/my-talk'
 expected:
   output_contains:
-    - "function"
+  - slide
   outcomes:
-    - type: task_completed
+  - type: task_completed

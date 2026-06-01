@@ -1,16 +1,15 @@
-id: basic-usage-001
+id: social-digest-001
 name: Basic Usage
-description: |
-  Test that the skill handles a typical request correctly.
+description: Create a daily digest script.
 tags:
-  - basic
-  - happy-path
+- basic
+- happy-path
 inputs:
-  prompt: "Help me with this task"
-  files:
-    - path: sample.py
+  prompt: Build a Bun script that fetches today's Discord channel messages, summarizes
+    them, and saves to Obsidian.
 expected:
   output_contains:
-    - "function"
+  - discord
+  - digest
   outcomes:
-    - type: task_completed
+  - type: task_completed

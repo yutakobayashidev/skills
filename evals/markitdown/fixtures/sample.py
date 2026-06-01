@@ -1,3 +1,2 @@
-def hello(name):
-    """Greet someone by name."""
-    return f"Hello, {name}!"
+def hello():
+    print('Hello, world!')

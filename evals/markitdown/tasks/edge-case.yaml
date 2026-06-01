@@ -1,11 +1,10 @@
-id: edge-case-001
-name: Edge Case - Empty Input
-description: |
-  Test that the skill handles edge cases gracefully.
+id: markitdown-002
+name: Edge Case - Empty File
+description: Handle empty or minimal input.
 tags:
-  - edge-case
+- edge-case
 inputs:
-  prompt: ""
+  prompt: Convert the content to Markdown.
 expected:
   outcomes:
-    - type: task_completed
+  - type: task_completed

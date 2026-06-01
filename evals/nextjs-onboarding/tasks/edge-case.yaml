@@ -1,11 +1,12 @@
-id: edge-case-001
-name: Edge Case - Empty Input
-description: |
-  Test that the skill handles edge cases gracefully.
+id: nextjs-onboarding-002
+name: Edge Case - Minimal Setup
+description: Very minimal Next.js project.
 tags:
-  - edge-case
+- edge-case
 inputs:
-  prompt: ""
+  prompt: Check if this project is ready for development.
+  files:
+  - path: package.json
 expected:
   outcomes:
-    - type: task_completed
+  - type: task_completed

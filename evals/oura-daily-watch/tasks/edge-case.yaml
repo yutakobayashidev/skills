@@ -1,11 +1,10 @@
-id: edge-case-001
-name: Edge Case - Empty Input
-description: |
-  Test that the skill handles edge cases gracefully.
+id: oura-daily-watch-002
+name: Edge Case - Anomaly Alert
+description: Set up an anomaly detection alert.
 tags:
-  - edge-case
+- edge-case
 inputs:
-  prompt: ""
+  prompt: Add an anomaly alert when sleep score drops below 70.
 expected:
   outcomes:
-    - type: task_completed
+  - type: task_completed

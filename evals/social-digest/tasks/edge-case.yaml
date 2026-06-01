@@ -1,11 +1,10 @@
-id: edge-case-001
-name: Edge Case - Empty Input
-description: |
-  Test that the skill handles edge cases gracefully.
+id: social-digest-002
+name: Edge Case - Add Source
+description: Add a new social source to the digest.
 tags:
-  - edge-case
+- edge-case
 inputs:
-  prompt: ""
+  prompt: Add Slack as an additional source alongside Discord and Mastodon.
 expected:
   outcomes:
-    - type: task_completed
+  - type: task_completed

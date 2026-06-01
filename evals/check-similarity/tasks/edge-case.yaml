@@ -1,11 +1,12 @@
-id: edge-case-001
-name: Edge Case - Empty Input
-description: |
-  Test that the skill handles edge cases gracefully.
+id: check-similarity-002
+name: Edge Case - No Duplicates
+description: Handle case with no duplicated code.
 tags:
-  - edge-case
+- edge-case
 inputs:
-  prompt: ""
+  prompt: Check if there are any duplicate functions in this file.
+  files:
+  - path: orders.ts
 expected:
   outcomes:
-    - type: task_completed
+  - type: task_completed
