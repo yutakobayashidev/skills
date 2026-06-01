@@ -1,0 +1,17 @@
+id: basic-usage-001
+name: Basic Usage
+description: |
+  Test that the skill drafts an ADR for a real technical decision.
+tags:
+  - basic
+  - happy-path
+inputs:
+  prompt: "Draft an ADR for choosing Postgres over MySQL for the user service"
+  files:
+    - path: context.md
+expected:
+  output_contains:
+    - "Decision"
+    - "Consequences"
+  outcomes:
+    - type: task_completed

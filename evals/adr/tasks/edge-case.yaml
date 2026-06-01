@@ -1,0 +1,13 @@
+id: edge-case-001
+name: Edge Case - Non-ADR Request
+description: |
+  Test that the skill handles a non-technical or summary request gracefully.
+tags:
+  - edge-case
+inputs:
+  prompt: "Just write a quick summary of our options, no need for a full ADR"
+  files:
+    - path: context.md
+expected:
+  outcomes:
+    - type: task_completed
