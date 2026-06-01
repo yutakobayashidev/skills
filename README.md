@@ -1,6 +1,6 @@
 # Skills
 
-Personal agent skills for AI coding assistants. Compatible with Claude Code, Codex CLI, OpenCode, Cursor, and any skills-compatible agent.
+Personal agent skills for AI coding assistants. These skills follow the [Agent Skills specification](https://agentskills.io) and are compatible with Claude Code, Codex CLI, OpenCode, Cursor, and any skills-compatible agent.
 
 ## Skills
 
@@ -22,28 +22,102 @@ Personal agent skills for AI coding assistants. Compatible with Claude Code, Cod
 
 ## Installation
 
+### npx skills
+
 ```bash
-# npx
 npx skills add yutakobayashidev/skills
+```
 
-# Claude Code
+### Claude Code
+
+```bash
 /plugin marketplace add yutakobayashidev/skills
+```
 
-# Manual
+### Manually
+
+Clone the repo and copy skills to your agent's skills directory:
+
+```bash
+git clone https://github.com/yutakobayashidev/skills
 cp -r skills/skills/* ~/.claude/skills/
+```
 
-# Nix
+### Nix (agent-skills-nix)
+
+Consume this repository via [agent-skills-nix](https://github.com/Kyure-A/agent-skills-nix) for declarative skill management with automatic deployment to multiple agents.
+
+```nix
+# flake.nix
+{
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    agent-skills = {
+      url = "github:Kyure-A/agent-skills-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    skills = {
+      url = "github:yutakobayashidev/skills";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  # Pass to home-manager as extraSpecialArgs, then:
+  home-manager.users.youruser = {
+    programs.agent-skills = {
+      enable = true;
+      sources.local = {
+        path = inputs.skills;
+        subdir = "skills";
+      };
+      # Deploy to agents
+      targets = {
+        claude.enable = true;
+        codex.enable = true;
+        agents.enable = true;
+      };
+    };
+  };
+}
+```
+
+Skills are deployed to `~/.agents/skills`, `~/.config/claude/skills`, and `~/.config/codex/skills`. See [dotnix](https://github.com/yutakobayashidev/dotnix) for a complete reference setup.
+
+### Local Install (waza skill)
+
+Install the waza skill (from [microsoft/waza](https://github.com/microsoft/waza/blob/main/skills/waza/SKILL.md)) to `.claude/skills/` without home-manager:
+
+```bash
 nix run github:yutakobayashidev/skills#skills-install-local
 ```
 
-## Waza
+This uses [agent-skills-nix](https://github.com/Kyure-A/agent-skills-nix) for a local-scope install — useful when you want the waza skill for evaluating other skills without adding it to your global agent configuration.
 
-Evaluates AI agent skills. Install via `skills-install-local` or run ad-hoc:
+## Waza Usage
+
+[waza](https://github.com/microsoft/waza) is a CLI for evaluating AI agent skills.
 
 ```bash
-nix run github:yutakobayashidev/skills#waza -- init
-nix run github:yutakobayashidev/skills#waza -- run
+# Run ad-hoc
+nix run github:yutakobayashidev/skills#waza -- --help
+
+# Initialize a project
+nix run .#waza -- init
+
+# Create a new skill with eval suite
+nix run .#waza -- new skill
+
+# Run evals
+nix run .#waza -- run
 ```
+
+## Packages
+
+- **waza**: waza CLI, re-exported from [yutakobayashidev/nur-packages](https://github.com/yutakobayashidev/nur-packages).
+
+## Apps
+
+- **skills-install-local**: Install selected skills to agent directories via `agent-skills-nix`.
 
 ## License
 
