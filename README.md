@@ -44,8 +44,6 @@ waza run         # run evals
 waza check       # validate skill readiness
 ```
 
-Full documentation: `.claude/skills/waza/SKILL.md` (auto-deployed via `direnv allow`).
-
 ## License
 
 MIT
