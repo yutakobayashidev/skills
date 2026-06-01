@@ -3,5 +3,15 @@ _build/
 .waza-cache/
 coverage.txt
 *.exe
-.claude/skills/
 .pre-commit-config.yaml
+
+# Agent skill install dirs
+.agent/
+.agents/
+.claude/
+.codex/
+.cursor/
+.gemini/
+.github/skills/
+.opencode/
+.windsurf/
