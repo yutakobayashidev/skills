@@ -93,15 +93,31 @@ nix run github:yutakobayashidev/skills#skills-install-local
 
 This uses [agent-skills-nix](https://github.com/Kyure-A/agent-skills-nix) for a local-scope install — useful when you want the waza skill for evaluating other skills without adding it to your global agent configuration.
 
+## Waza Usage
+
+[waza](https://github.com/microsoft/waza) is a CLI for evaluating AI agent skills.
+
+```bash
+# Run ad-hoc
+nix run github:yutakobayashidev/skills#waza -- --help
+
+# Initialize a project
+nix run .#waza -- init
+
+# Create a new skill with eval suite
+nix run .#waza -- new skill
+
+# Run evals
+nix run .#waza -- run
+```
+
 ## Packages
 
-The flake also provides:
-
-- **waza**: CLI and framework for evaluating AI agent skills ([Microsoft/waza](https://github.com/microsoft/waza)), re-exported from [yutakobayashidev/nur-packages](https://github.com/yutakobayashidev/nur-packages).
+- **waza**: waza CLI, re-exported from [yutakobayashidev/nur-packages](https://github.com/yutakobayashidev/nur-packages).
 
 ## Apps
 
-- **skills-install-local**: Install selected skills (waza) to `.claude/skills/` via `agent-skills-nix` local install.
+- **skills-install-local**: Install selected skills to agent directories via `agent-skills-nix`.
 
 ## License
 
