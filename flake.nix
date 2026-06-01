@@ -53,9 +53,9 @@
             skills = { };
           };
           bundle = agentLib.mkBundle { inherit pkgs selection; };
-          localTargets = {
-            claude = agentLib.defaultLocalTargets.claude // { enable = true; };
-          };
+          localTargets = builtins.mapAttrs (
+            name: target: target // { enable = true; }
+          ) agentLib.defaultLocalTargets;
         in
         {
           packages = {
