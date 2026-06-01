@@ -10,6 +10,7 @@ on:
       - "flake.lock"
 
 permissions:
+  id-token: write
   contents: read
 
 jobs:
@@ -24,9 +25,9 @@ jobs:
       - uses: cachix/install-nix-action@2126ae7fc54c9df00dd18f7f18754393182c73cd # v31.9.1
         with:
           github_access_token: ${{ github.token }}
-      - uses: cachix/cachix-action@3ba601ff5bbb07c7220846facfa2cd81eeee15a1 # v16
+      - uses: Mic92/niks3-action@bc010bf9dbc79ec59de6c79b1e7a167977d3978b # v1.0.0
         with:
-          name: numtide
-          skipPush: true
+          server-url: https://niks3.yutakobayashi.com
+          skip-push: true
       - name: Run evaluations
         run: nix run .#waza -- run --output-dir ./results
