@@ -19,8 +19,8 @@
       url = "github:microsoft/waza";
       flake = false;
     };
-    actrun-overlay = {
-      url = "github:myuron/actrun-overlay";
+    actrun = {
+      url = "github:mizchi/actrun";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -37,7 +37,7 @@
       perSystem =
         { system, ... }:
         let
-          pkgs = inputs.nixpkgs.legacyPackages.${system}.extend inputs.actrun-overlay.overlays.default;
+          pkgs = inputs.nixpkgs.legacyPackages.${system}.extend inputs.actrun.overlays.default;
           agentLib = inputs.agent-skills.lib.agent-skills;
 
           sources = {
@@ -67,8 +67,15 @@
           };
 
           devShells.default = pkgs.mkShell {
-            packages = [ inputs.nur-packages.packages.${system}.waza pkgs.actrun pkgs.nodejs ];
-            shellHook = agentLib.mkShellHook { inherit pkgs bundle; targets = localTargets; };
+            packages = [
+              inputs.nur-packages.packages.${system}.waza
+              pkgs.actrun
+              pkgs.nodejs
+            ];
+            shellHook = agentLib.mkShellHook {
+              inherit pkgs bundle;
+              targets = localTargets;
+            };
           };
         };
     };

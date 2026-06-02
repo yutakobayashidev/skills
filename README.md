@@ -50,14 +50,11 @@ Consume this repository via [agent-skills-nix](https://github.com/Kyure-A/agent-
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    agent-skills = {
-      url = "github:Kyure-A/agent-skills-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     skills = {
       url = "github:yutakobayashidev/skills";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    agent-skills.url = "github:Kyure-A/agent-skills-nix";
   };
 
   # Pass to home-manager as extraSpecialArgs, then:
