@@ -37,7 +37,7 @@
       perSystem =
         { system, ... }:
         let
-          pkgs = inputs.nixpkgs.legacyPackages.${system}.extend inputs.actrun.overlays.default;
+          pkgs = inputs.nixpkgs.legacyPackages.${system};
           agentLib = inputs.agent-skills.lib.agent-skills;
 
           sources = {
@@ -45,12 +45,17 @@
               path = inputs.waza-skill;
               subdir = "skills";
             };
+            actrun = {
+              path = inputs.actrun.outPath;
+              subdir = ".claude/skills";
+            };
           };
 
           catalog = agentLib.discoverCatalog sources;
           allowlist = agentLib.allowlistFor {
             inherit catalog sources;
             enable = [ "waza" ];
+            enableAll = [ "actrun" ];
           };
           selection = agentLib.selectSkills {
             inherit catalog allowlist sources;
@@ -69,7 +74,7 @@
           devShells.default = pkgs.mkShell {
             packages = [
               inputs.nur-packages.packages.${system}.waza
-              pkgs.actrun
+              inputs.actrun.packages.${system}.default
               pkgs.nodejs
             ];
             shellHook = agentLib.mkShellHook {
