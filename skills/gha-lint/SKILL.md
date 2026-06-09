@@ -103,6 +103,9 @@ nix run nixpkgs#pinact -- run \
 # Validate only (no file changes, good for CI)
 nix run nixpkgs#pinact -- run --check
 
+# Verify pinned SHAs match their version comments; catches wrong SHAs
+nix run nixpkgs#pinact -- run --check --verify-comment
+
 # Show diff only
 nix run nixpkgs#pinact -- run --diff
 
@@ -125,15 +128,15 @@ nix run nixpkgs#pinact -- run --update
 
 ### Key Options
 
-| Option          | Description                                                 |
-| --------------- | ----------------------------------------------------------- |
-| `--check`       | Non-zero exit if unpinned references exist. No file changes |
-| `--verify, -v`  | Verify SHA and version annotation consistency               |
-| `--update, -u`  | Update to latest versions                                   |
-| `--diff`        | Output diff only. No file changes                           |
-| `--include, -i` | Filter targets by regex                                     |
-| `--exclude, -e` | Exclude targets by regex                                    |
-| `--min-age, -m` | Skip releases newer than N days (use with `-u`)             |
+| Option                               | Description                                                           |
+| ------------------------------------ | --------------------------------------------------------------------- |
+| `--check`                            | Non-zero exit if unpinned references exist. No file changes           |
+| `--verify-comment`, `--verify`, `-v` | Verify the version comment matches the pinned SHA; catches wrong SHAs |
+| `--update, -u`                       | Update to latest versions                                             |
+| `--diff`                             | Output diff only. No file changes                                     |
+| `--include, -i`                      | Filter targets by regex                                               |
+| `--exclude, -e`                      | Exclude targets by regex                                              |
+| `--min-age, -m`                      | Skip releases newer than N days (use with `-u`)                       |
 
 ### CI Usage
 
@@ -142,7 +145,7 @@ Use `suzuki-shunsuke/pinact-action`:
 ```yaml
 - uses: suzuki-shunsuke/pinact-action@1081f5ad49ac904b7d977784f338145150a32112 # v1.4.0
   with:
-    skip_push: 'true'
+    skip_push: "true"
 ```
 
 ---
@@ -263,7 +266,7 @@ Without Advanced Security:
 Example workflow combining all 4 tools using their official actions (no nixpkgs):
 
 ```yaml
-name: 'CI: GitHub Actions lint'
+name: "CI: GitHub Actions lint"
 
 on:
   pull_request:
@@ -294,7 +297,7 @@ jobs:
 
       - uses: suzuki-shunsuke/pinact-action@1081f5ad49ac904b7d977784f338145150a32112 # v1.4.0
         with:
-          skip_push: 'true'
+          skip_push: "true"
 
       - uses: aquaproj/aqua-installer@11dd79b4e498d471a9385aa9fb7f62bb5f52a73c # v4.0.4
         with:
