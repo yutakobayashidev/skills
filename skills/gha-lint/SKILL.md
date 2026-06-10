@@ -113,6 +113,19 @@ nix run nixpkgs#pinact -- run --diff
 nix run nixpkgs#pinact -- run --update
 ```
 
+### Release Notes for Updates
+
+After `pinact --update`, use the bundled helper to fetch GitHub Releases between the old and new action versions:
+
+```bash
+python3 skills/gha-lint/scripts/github_release_notes.py actions/checkout --from v4.2.2 --to v4.3.1
+```
+
+- The range is `--from` exclusive and `--to` inclusive by default, matching upgrade review needs
+- Pass `--include-from` when you also need the baseline release notes
+- The script reads `GITHUB_TOKEN`, `GH_TOKEN`, or `gh auth token` automatically to avoid low unauthenticated API limits
+- It accepts either `owner/repo` or `https://github.com/owner/repo`
+
 ### Conversion Format
 
 ```yaml
