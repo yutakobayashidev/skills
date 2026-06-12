@@ -1,0 +1,18 @@
+id: terraform-toolchain-001
+name: Basic Usage
+description: Add Terraform tooling to a Nix devShell.
+tags:
+  - basic
+  - happy-path
+inputs:
+  prompt: Set up a Terraform devShell based on the-nix-way/dev-templates#hashi and include checkov, trivy, tflint, and provider pinning with terraform.withPlugins.
+  files:
+    - path: hashi-flake.md
+expected:
+  output_contains:
+    - hashi
+    - withPlugins
+    - checkov
+    - trivy
+  outcomes:
+    - type: task_completed

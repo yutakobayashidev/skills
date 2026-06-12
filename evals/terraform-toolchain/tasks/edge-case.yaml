@@ -1,0 +1,15 @@
+id: terraform-toolchain-002
+name: Edge Case - OpenTofu Custom Provider
+description: Improve an OpenTofu shell that needs a custom provider.
+tags:
+  - edge-case
+inputs:
+  prompt: Review this OpenTofu flake and show how to add a custom provider with mkProvider while keeping local validation with checkov and trivy.
+  files:
+    - path: opentofu-custom-provider.md
+expected:
+  output_contains:
+    - mkProvider
+    - opentofu.withPlugins
+  outcomes:
+    - type: task_completed

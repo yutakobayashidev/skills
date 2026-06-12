@@ -18,6 +18,7 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 | [repo-creator](skills/repo-creator)                                     | Create new GitHub repositories through OpenTofu                  |
 | [social-digest](skills/social-digest)                                   | Fetch and summarize Discord + Mastodon posts                     |
 | [speakerdeck](skills/speakerdeck)                                       | Download slide images from a SpeakerDeck presentation            |
+| [terraform-toolchain](skills/terraform-toolchain)                       | Set up Terraform/OpenTofu Nix devShells and IaC scanners         |
 | [vitest-testing](skills/vitest-testing)                                 | Write focused, readable Vitest tests                             |
 | [youtube-transcript](skills/youtube-transcript)                         | Extract transcripts from YouTube videos                          |
 

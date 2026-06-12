@@ -1,0 +1,14 @@
+id: terraform-toolchain-003
+name: Should Not Trigger
+description: Adjacent HashiCorp request that does not need Terraform toolchain setup.
+tags:
+  - anti-trigger
+  - negative-test
+inputs:
+  prompt: Explain the difference between Vault policies and Nomad ACL policies at a high level.
+expected:
+  output_not_contains:
+    - withPlugins
+    - checkov
+    - trivy
+    - tflint
