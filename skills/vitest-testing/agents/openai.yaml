@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vitest Testing"
+  short_description: "Write focused, readable Vitest tests"
+  default_prompt: "Use $vitest-testing to add behaviour-focused tests for this TypeScript change."
