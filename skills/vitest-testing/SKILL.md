@@ -32,6 +32,7 @@ This skill covers Vitest-specific test shape and review rules.
 - Do not over-DRY tests. Keep repeated setup inline when it makes the behaviour easier to read.
 - Keep assertions in the test unless a helper name is clearer than the assertion it hides.
 - Use `expect.assert` to make preconditions explicit and narrow nullable values instead of using non-null assertions.
+- Do not `throw` inside test cases for ordinary control flow or missing fixtures. Prefer `expect.assert` and direct assertions so failures stay readable and consistent with the test runner.
 
 ## Output Tests
 
