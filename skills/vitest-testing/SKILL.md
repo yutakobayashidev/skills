@@ -15,6 +15,53 @@ This skill covers Vitest-specific test shape and review rules.
 - Avoid `await import()` and other dynamic imports in tests unless the behaviour under test is dynamic loading.
 - Use `vi.stubEnv()` instead of mutating `process.env` directly.
 
+## Linting
+
+- Choose at least one Vitest-aware linter configuration and make it mandatory in the project. The point is to catch invalid test shapes early, especially focused tests, conditional assertions, and misplaced hoisted APIs.
+- Prefer ESLint with `@vitest/eslint-plugin` when the repo already uses ESLint. It has the deepest Vitest coverage and is the default recommendation.
+- Use Oxlint when the repo wants faster linting and already relies on Oxlint plugins. Its Vitest coverage is strong, but narrower than ESLint.
+- Use Biome only when the repo is standardized on Biome and can accept lighter Vitest-specific coverage. Its test-domain rules help, but it is not the best primary Vitest guardrail.
+
+Recommended default with ESLint:
+
+```js
+// eslint.config.js
+import { defineConfig } from "eslint/config";
+import vitest from "@vitest/eslint-plugin";
+
+export default defineConfig({
+  files: ["**/*.{test,spec}.{ts,tsx,js,jsx}"],
+  plugins: { vitest },
+  rules: {
+    ...vitest.configs.recommended.rules,
+
+    "vitest/no-focused-tests": "error",
+    "vitest/no-disabled-tests": "warn",
+    "vitest/no-conditional-expect": "error",
+    "vitest/no-standalone-expect": "error",
+    "vitest/expect-expect": "error",
+    "vitest/hoisted-apis-on-top": "error",
+    "vitest/consistent-test-it": ["warn", { fn: "test" }],
+  },
+});
+```
+
+Oxlint alternative:
+
+```json
+{
+  "plugins": ["vitest"],
+  "rules": {
+    "vitest/no-focused-tests": "error",
+    "vitest/no-disabled-tests": "warn",
+    "vitest/no-conditional-expect": "error",
+    "vitest/no-standalone-expect": "error",
+    "vitest/expect-expect": "error",
+    "vitest/hoisted-apis-on-top": "error"
+  }
+}
+```
+
 ## Module Mocking
 
 - `vi.mock()` is hoisted. Do not redefine the same module mock inside individual tests and expect later calls to win at runtime.
@@ -102,7 +149,7 @@ it("shows the loading state", () => {
 
   render(<UserProfile />);
 
-expect(screen.getByText("Loading...")).toBeInTheDocument();
+  expect(screen.getByText("Loading...")).toBeInTheDocument();
 });
 ```
 
