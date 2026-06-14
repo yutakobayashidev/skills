@@ -15,6 +15,13 @@ This skill covers Vitest-specific test shape and review rules.
 - Avoid `await import()` and other dynamic imports in tests unless the behaviour under test is dynamic loading.
 - Use `vi.stubEnv()` instead of mutating `process.env` directly.
 
+## Module Mocking
+
+- `vi.mock()` is hoisted. Do not redefine the same module mock inside individual tests and expect later calls to win at runtime.
+- When a mocked module's return value is the main input to the unit under test, define a shared mock with `vi.hoisted()` and update that mock per test with `mockReturnValue` or `mockImplementation`.
+- Do not capture ordinary top-level variables inside a `vi.mock()` factory. If the factory needs a shared mock reference, create it with `vi.hoisted()`.
+- Use `vi.doMock()` only when you specifically need a non-hoisted mock for a later dynamic import.
+
 ## Readability
 
 - Test one behaviour per `it`.
@@ -70,6 +77,30 @@ it("returns the first row", () => {
   expect.assert.isDefined(firstRow, "expected at least one row");
 
   expect(firstRow.id).toBe("row-1");
+});
+```
+
+Mocking a hook whose return value changes by test:
+
+```ts
+const useUserQuery = vi.hoisted(() =>
+  vi.fn(() => ({
+    data: { name: "John Doe" },
+  })),
+);
+
+vi.mock("./use-user-query", () => ({
+  useUserQuery,
+}));
+
+it("shows the loading state", () => {
+  useUserQuery.mockReturnValue({
+    data: undefined,
+  });
+
+  render(<UserProfile />);
+
+  expect(screen.getByText("Loading...")).toBeInTheDocument();
 });
 ```
 
