@@ -20,6 +20,7 @@ This skill covers Vitest-specific test shape and review rules.
 - `vi.mock()` is hoisted. Do not redefine the same module mock inside individual tests and expect later calls to win at runtime.
 - When a mocked module's return value is the main input to the unit under test, define a shared mock with `vi.hoisted()` and update that mock per test with `mockReturnValue` or `mockImplementation`.
 - Do not capture ordinary top-level variables inside a `vi.mock()` factory. If the factory needs a shared mock reference, create it with `vi.hoisted()`.
+- Avoid `await import()` inside `vi.hoisted()` unless you must read another module before imports are initialized. Imported bindings are not available there yet, so this is the narrow exception to the normal "avoid dynamic import" rule.
 - Use `vi.doMock()` only when you specifically need a non-hoisted mock for a later dynamic import.
 
 ## Readability
@@ -100,9 +101,19 @@ it("shows the loading state", () => {
 
   render(<UserProfile />);
 
-  expect(screen.getByText("Loading...")).toBeInTheDocument();
+expect(screen.getByText("Loading...")).toBeInTheDocument();
 });
 ```
+
+Rare exception: reading another module inside `vi.hoisted()`:
+
+```ts
+const { value } = await vi.hoisted(async () => {
+  return await import("./some/module.js");
+});
+```
+
+Prefer moving that setup into the imported module itself when possible. Imports are already hoisted, so importing inside `vi.hoisted()` should stay exceptional.
 
 Schema validation:
 
