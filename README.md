@@ -7,6 +7,7 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 | Skill                                                                   | Description                                                      |
 | ----------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | [adr](skills/adr)                                                       | Draft or refine architecture decision records                    |
+| [babashka-nrepl](skills/babashka-nrepl)                                 | Write Babashka scripts with nREPL-driven development             |
 | [check-similarity](skills/check-similarity)                             | Detect duplicate TypeScript/JavaScript code using AST comparison |
 | [dce](skills/dce)                                                       | Detect and eliminate dead code in TypeScript projects            |
 | [functional-cohesion-components](skills/functional-cohesion-components) | Guide frontend component design using functional cohesion        |
