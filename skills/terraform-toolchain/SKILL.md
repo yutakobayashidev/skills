@@ -1,6 +1,6 @@
 ---
 name: terraform-toolchain
-description: Set up, review, or improve Terraform/OpenTofu project tooling with Nix devShells, especially when using the-nix-way/dev-templates#hashi, checkov, trivy, tflint, pike from yutakobayashidev/nur-packages, or terraform/opentofu.withPlugins. Use this whenever the user asks about Terraform/OpenTofu development environments, provider plugin pinning through Nix, infrastructure security scanning, or turning a HashiCorp-style project into a reproducible Nix workflow.
+description: Set up, review, or improve Terraform/OpenTofu project tooling with Nix devShells, especially when using the-nix-way/dev-templates#hashi, checkov, trivy, tflint, pike/tfmv from yutakobayashidev/nur-packages, or terraform/opentofu.withPlugins. Use this whenever the user asks about Terraform/OpenTofu development environments, provider plugin pinning through Nix, infrastructure security scanning, or turning a HashiCorp-style project into a reproducible Nix workflow.
 user-invocable: true
 ---
 
@@ -29,6 +29,7 @@ nix flake init -t github:the-nix-way/dev-templates#hashi
 | `checkov`                 | IaC policy and misconfiguration scanning.                                                                                                                       |
 | `trivy`                   | Filesystem scan for vulnerabilities, secrets, and IaC misconfigurations.                                                                                        |
 | `pike`                    | IAM permission discovery for Terraform resources, when relevant. Use `inputs.nur-packages.packages.${system}.pike` from `github:yutakobayashidev/nur-packages`. |
+| `tfmv`                    | Rename Terraform/OpenTofu resources, data sources, and modules while generating `moved` blocks. Use `inputs.nur-packages.packages.${system}.tfmv`.              |
 | `sops`                    | Secrets workflow, when the project uses SOPS or the `carlpett/sops` provider.                                                                                   |
 
 4. Prefer `terraform.withPlugins` or `opentofu.withPlugins` in Nix when provider plugins are known. This makes `init` less dependent on live registry downloads and keeps local/CI behavior closer.
@@ -76,6 +77,7 @@ pkgs.mkShellNoCC {
     trivy
     # flake input: nur-packages.url = "github:yutakobayashidev/nur-packages";
     inputs.nur-packages.packages.${system}.pike
+    inputs.nur-packages.packages.${system}.tfmv
   ];
 }
 ```
@@ -163,7 +165,7 @@ When applying from GitHub Actions, explicitly design for tokenless/cloud-native 
 
 - The devShell is based on `the-nix-way/dev-templates#hashi` unless the repo already has a better local structure.
 - Terraform/OpenTofu provider plugins in `required_providers` are mirrored in `withPlugins` when available.
-- `checkov`, `trivy`, and `tflint` are available through `nix develop`.
+- `checkov`, `trivy`, `tflint`, and relevant NUR tools such as `pike`/`tfmv` are available through `nix develop`.
 - Validation uses `init -backend=false` unless a real plan/apply is intended.
 - Secrets are not printed in logs, committed in `tfvars`, or embedded in examples.
 - Docs mention the exact local commands the repository supports.
