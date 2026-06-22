@@ -5,12 +5,12 @@ tags:
   - basic
   - happy-path
 inputs:
-  prompt: Set up a Terraform devShell based on the-nix-way/dev-templates#hashi and include checkov, trivy, tflint, and provider pinning with terraform.withPlugins.
+  prompt: Set up a Terraform devShell based on yutakobayashidev/ashiba#agent-web-infra and include checkov, trivy, tflint, and provider pinning with terraform.withPlugins. Mention when to use the minimal the-nix-way/dev-templates#hashi template instead.
   files:
-    - path: hashi-flake.md
+    - path: agent-web-infra-flake.md
 expected:
   output_contains:
-    - hashi
+    - agent-web-infra
     - withPlugins
     - checkov
     - trivy

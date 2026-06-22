@@ -1,18 +1,24 @@
 ---
 name: terraform-toolchain
-description: Set up, review, or improve Terraform/OpenTofu project tooling with Nix devShells, especially when using the-nix-way/dev-templates#hashi, checkov, trivy, tflint, pike/tfmv from yutakobayashidev/nur-packages, or terraform/opentofu.withPlugins. Use this whenever the user asks about Terraform/OpenTofu development environments, provider plugin pinning through Nix, infrastructure security scanning, or turning a HashiCorp-style project into a reproducible Nix workflow.
+description: Set up, review, or improve Terraform/OpenTofu project tooling with Nix devShells, especially when using yutakobayashidev/ashiba#agent-web-infra, the-nix-way/dev-templates#hashi for minimal setups, checkov, trivy, tflint, pike/tfmv from yutakobayashidev/nur-packages, or terraform/opentofu.withPlugins. Use this whenever the user asks about Terraform/OpenTofu development environments, provider plugin pinning through Nix, infrastructure security scanning, or turning a HashiCorp-style project into a reproducible Nix workflow.
 user-invocable: true
 ---
 
 # Terraform/OpenTofu Toolchain
 
-Use this skill to create or improve a reproducible Terraform/OpenTofu development environment. The local default is to start from `the-nix-way/dev-templates#hashi` and then add the missing project-specific pieces.
+Use this skill to create or improve a reproducible Terraform/OpenTofu development environment. The local default is to start from `github:yutakobayashidev/ashiba#agent-web-infra`. If the user explicitly wants a minimal setup, use `github:the-nix-way/dev-templates#hashi` instead and then add only the missing project-specific pieces.
 
 Keep the setup simple: one devShell, explicit tools, explicit provider plugins, and direct commands that the user can run locally or in CI. Avoid wrapper scripts unless the repository already uses them or the command is genuinely repeated and error-prone.
 
 ## Default Approach
 
-1. Start from the HashiCorp template:
+1. Start from the agent web infrastructure template:
+
+```bash
+nix flake init -t github:yutakobayashidev/ashiba#agent-web-infra
+```
+
+For minimal Terraform/OpenTofu-only repositories, start from the smaller HashiCorp template instead:
 
 ```bash
 nix flake init -t github:the-nix-way/dev-templates#hashi
@@ -163,7 +169,7 @@ When applying from GitHub Actions, explicitly design for tokenless/cloud-native 
 
 ## Review Checklist
 
-- The devShell is based on `the-nix-way/dev-templates#hashi` unless the repo already has a better local structure.
+- The devShell is based on `yutakobayashidev/ashiba#agent-web-infra`, or `the-nix-way/dev-templates#hashi` when the user wants a minimal Terraform/OpenTofu-only setup.
 - Terraform/OpenTofu provider plugins in `required_providers` are mirrored in `withPlugins` when available.
 - `checkov`, `trivy`, `tflint`, and relevant NUR tools such as `pike`/`tfmv` are available through `nix develop`.
 - Validation uses `init -backend=false` unless a real plan/apply is intended.
