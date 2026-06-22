@@ -1,6 +1,6 @@
 ---
 name: terraform-toolchain
-description: Set up, review, or improve Terraform/OpenTofu project tooling with Nix devShells, especially when using yutakobayashidev/ashiba#agent-web-infra, the-nix-way/dev-templates#hashi for minimal setups, checkov, trivy, tflint, pike/tfmv from yutakobayashidev/nur-packages, or terraform/opentofu.withPlugins. Use this whenever the user asks about Terraform/OpenTofu development environments, provider plugin pinning through Nix, infrastructure security scanning, or turning a HashiCorp-style project into a reproducible Nix workflow.
+description: Set up, review, or improve Terraform/OpenTofu project tooling with Nix devShells, especially when using yutakobayashidev/ashiba#agent-web-infra, agent-skills-nix, the-nix-way/dev-templates#hashi for minimal setups, checkov, trivy, tflint, pike/tfmv from yutakobayashidev/nur-packages, or terraform/opentofu.withPlugins. Use this whenever the user asks about Terraform/OpenTofu development environments, provider plugin pinning through Nix, infrastructure security scanning, or turning a HashiCorp-style project into a reproducible Nix workflow.
 user-invocable: true
 ---
 
@@ -41,6 +41,24 @@ nix flake init -t github:the-nix-way/dev-templates#hashi
 4. Prefer `terraform.withPlugins` or `opentofu.withPlugins` in Nix when provider plugins are known. This makes `init` less dependent on live registry downloads and keeps local/CI behavior closer.
 
 5. Document only the commands that are actually useful for the project. Avoid adding a long generic Terraform tutorial.
+
+## Agent Skills in agent-web-infra
+
+`ashiba#agent-web-infra` also installs agent skills with `Kyure-A/agent-skills-nix`. Keep the explanation minimal and close to the code:
+
+| Source | Upstream | Use when |
+| ------ | -------- | -------- |
+| `google-cloud` | [google/skills](https://github.com/google/skills/tree/main/skills/cloud) | The infrastructure targets Google Cloud. |
+| `cloudflare-skills` | [cloudflare/skills](https://github.com/cloudflare/skills) | The infrastructure targets Cloudflare Workers, Pages, D1, R2, or related Cloudflare services. |
+| `vercel` | [vercel-labs/skills](https://github.com/vercel-labs/skills) | The app deploys to Vercel. |
+| `vercel-next` | [vercel-labs/next-skills](https://github.com/vercel-labs/next-skills) | The app is Next.js on Vercel. |
+| `hono` | [yusukebe/hono-skill](https://github.com/yusukebe/hono-skill) | The backend uses Hono. |
+| `ui-ux-pro-max` | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | The project needs frontend design guidance. |
+| `modern-web-guidance` | [GoogleChrome/modern-web-guidance](https://github.com/GoogleChrome/modern-web-guidance) | The project needs browser/platform guidance. |
+| `hashicorp` | [hashicorp/agent-skills](https://github.com/hashicorp/agent-skills) | Terraform/OpenTofu, Vault, or other HashiCorp workflows matter. |
+| `actrun` | [mizchi/actrun](https://github.com/mizchi/actrun) | Local GitHub Actions execution is useful. |
+
+Choose skill sources for the cloud provider and stack in use. For Google Cloud projects, keep `google-cloud`; for Cloudflare projects, keep `cloudflare-skills`; for Vercel/Next.js deployments, keep `vercel` and `vercel-next`; for Terraform/OpenTofu work, keep `hashicorp`. Remove unused providers instead of installing every source by default. Do not hand-copy generated skill directories into the repo; let `agent-skills-nix` install selected skills from pinned flake inputs.
 
 ## Choosing Terraform vs OpenTofu
 
@@ -170,6 +188,7 @@ When applying from GitHub Actions, explicitly design for tokenless/cloud-native 
 ## Review Checklist
 
 - The devShell is based on `yutakobayashidev/ashiba#agent-web-infra`, or `the-nix-way/dev-templates#hashi` when the user wants a minimal Terraform/OpenTofu-only setup.
+- The `agent-skills-nix` setup is explained when using `agent-web-infra`: pinned skill sources, selected targets, and shellHook installation are intentional parts of the template.
 - Terraform/OpenTofu provider plugins in `required_providers` are mirrored in `withPlugins` when available.
 - `checkov`, `trivy`, `tflint`, and relevant NUR tools such as `pike`/`tfmv` are available through `nix develop`.
 - Validation uses `init -backend=false` unless a real plan/apply is intended.

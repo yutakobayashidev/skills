@@ -5,12 +5,14 @@ tags:
   - basic
   - happy-path
 inputs:
-  prompt: Set up a Terraform devShell based on yutakobayashidev/ashiba#agent-web-infra and include checkov, trivy, tflint, and provider pinning with terraform.withPlugins. Mention when to use the minimal the-nix-way/dev-templates#hashi template instead.
+  prompt: Set up a Terraform devShell based on yutakobayashidev/ashiba#agent-web-infra and include checkov, trivy, tflint, and provider pinning with terraform.withPlugins. Include a minimal linked table of agent-skills-nix sources, including cloudflare-skills, and say to choose skill sources by cloud provider. Mention when to use the minimal the-nix-way/dev-templates#hashi template instead.
   files:
     - path: agent-web-infra-flake.md
 expected:
   output_contains:
     - agent-web-infra
+    - agent-skills-nix
+    - cloudflare-skills
     - withPlugins
     - checkov
     - trivy

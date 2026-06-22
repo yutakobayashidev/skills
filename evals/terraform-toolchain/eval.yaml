@@ -16,7 +16,7 @@ graders:
   - type: text
     config:
       regex_match:
-        - (?i)(ashiba|agent-web-infra|hashi|withPlugins|checkov|trivy|tflint|terraform|opentofu|tofu|nix develop)
+        - (?i)(ashiba|agent-web-infra|agent-skills-nix|hashi|withPlugins|checkov|trivy|tflint|terraform|opentofu|tofu|nix develop)
   - type: code
     config:
       assertions:
