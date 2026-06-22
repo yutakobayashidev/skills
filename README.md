@@ -68,12 +68,13 @@ Consume this repository via [agent-skills-nix](https://github.com/Kyure-A/agent-
         path = inputs.skills;
         subdir = "skills";
       };
-      # Deploy to agents
-      targets = {
-        claude.enable = true;
-        codex.enable = true;
-        agents.enable = true;
-      };
+      localTargets = builtins.mapAttrs (
+        _: target:
+        target
+        // {
+          enable = true;
+        }
+      ) agentLib.defaultLocalTargets;
     };
   };
 }

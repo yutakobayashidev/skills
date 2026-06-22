@@ -14,6 +14,7 @@ This skill covers Vitest-specific test shape and review rules.
 - If globals are not enabled, import only the Vitest APIs used by the file.
 - Avoid `await import()` and other dynamic imports in tests unless the behaviour under test is dynamic loading.
 - Use `vi.stubEnv()` instead of mutating `process.env` directly.
+- Use `.invalid` domains for dummy URLs that should never resolve, such as `https://service-under-test.invalid/path`, instead of real hosts like `example.com`; RFC 6761 reserves `.invalid` for names that return NXDOMAIN.
 
 ## Linting
 
