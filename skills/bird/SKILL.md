@@ -9,20 +9,12 @@ metadata:
       bins:
         - bird
     install:
-      - id: brew
-        kind: brew
-        formula: steipete/tap/bird
-        bins:
-          - bird
-        label: Install bird (brew)
-        os:
-          - darwin
       - id: npm
         kind: node
         package: "@yuta/bird"
         bins:
           - bird
-        label: Install bird (npm)
+        label: Install bird (Gitea npm)
 user-invocable: true
 ---
 
@@ -32,11 +24,35 @@ Fast X/Twitter CLI using GraphQL.
 
 ## Install
 
+Only install bird if the `bird` command is missing.
+
+Gitea Packages:
+
 ```bash
-npm config set @yuta:registry=https://git.yutakobayashi.com/api/packages/yuta/npm/
-npm install -g @yuta/bird
-brew install steipete/tap/bird
-bunx @yuta/bird whoami
+if ! command -v bird >/dev/null 2>&1; then
+  npm config set @yuta:registry=https://git.yutakobayashi.com/api/packages/yuta/npm/
+  npm install -g @yuta/bird
+fi
+```
+
+One-shot without installing:
+
+```bash
+npx -y --@yuta:registry=https://git.yutakobayashi.com/api/packages/yuta/npm/ @yuta/bird whoami
+```
+
+Nix flakes:
+
+```bash
+nix run git+https://git.yutakobayashi.com/yuta/bird -- --help
+```
+
+Point bird at your running twitter safe relay if the environment variable is missing:
+
+```bash
+if [ -z "${TWITTER_RELAY_BASE_URL:-}" ]; then
+  export TWITTER_RELAY_BASE_URL=https://tw.home.yutakobayashi.com/
+fi
 ```
 
 ## Account And Auth
@@ -167,7 +183,7 @@ bird replies <id> --all --delay 1000
 --timeout <ms>
 ```
 
-Environment variables: `BIRD_TIMEOUT_MS`, `BIRD_QUOTE_DEPTH`.
+Environment variables: `TWITTER_RELAY_BASE_URL`, `BIRD_TIMEOUT_MS`, `BIRD_QUOTE_DEPTH`.
 
 ## Troubleshooting
 
