@@ -1,0 +1,12 @@
+id: bird-002
+name: Edge Case - Query IDs
+description: Refresh stale GraphQL query IDs.
+tags:
+- edge-case
+inputs:
+  prompt: 'bird is returning 404 errors. Show me the command to refresh stale query IDs.'
+expected:
+  output_contains:
+  - bird
+  outcomes:
+  - type: task_completed

@@ -1,0 +1,13 @@
+id: bird-001
+name: Basic Usage
+description: Read a tweet with bird.
+tags:
+- basic
+- happy-path
+inputs:
+  prompt: 'Use bird to read this X post: https://x.com/jack/status/20'
+expected:
+  output_contains:
+  - bird
+  outcomes:
+  - type: task_completed

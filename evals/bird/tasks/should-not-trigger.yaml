@@ -1,0 +1,13 @@
+id: bird-003
+name: Should Not Trigger
+description: Unrelated request.
+tags:
+- anti-trigger
+- negative-test
+inputs:
+  prompt: What is the weather today?
+expected:
+  output_not_contains:
+  - bird
+  - twitter
+  - tweet
