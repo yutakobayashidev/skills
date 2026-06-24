@@ -72,6 +72,8 @@ bird thread <url-or-id>
 bird replies <url-or-id>
 ```
 
+`replies` does not support `-n`. To fetch more replies, use pagination options such as `--all`, `--max-pages`, or `--cursor`.
+
 ## Timelines
 
 ```bash
@@ -164,6 +166,8 @@ bird bookmarks --all
 bird bookmarks --max-pages 3
 bird bookmarks --cursor <cursor>
 bird replies <id> --all --delay 1000
+bird replies <id> --max-pages 3
+bird replies <id> --cursor <cursor>
 ```
 
 ## Output Options
