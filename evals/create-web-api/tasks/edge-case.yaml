@@ -1,0 +1,12 @@
+id: create-web-api-edge-001
+name: Retryable Asynchronous Payment API
+description: Test safety and lifecycle decisions for a retryable asynchronous operation.
+tags:
+  - edge-case
+inputs:
+  prompt: "Design a safe API contract for submitting payments that clients may retry and that finish asynchronously. Cover the lifecycle through completion and concurrent client actions. State assumptions and decisions that still need confirmation. Do not implement it."
+expected:
+  output_contains:
+    - "Retryable Asynchronous Payment API"
+  outcomes:
+    - type: task_completed

@@ -10,6 +10,7 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 | [babashka-nrepl](skills/babashka-nrepl)                                 | Write Babashka scripts with nREPL-driven development             |
 | [bird](skills/bird)                                                     | Read, search, post, and interact with X/Twitter via CLI          |
 | [check-similarity](skills/check-similarity)                             | Detect duplicate TypeScript/JavaScript code using AST comparison |
+| [create-web-api](skills/create-web-api)                                 | Design and audit REST-like Web API contracts                     |
 | [dce](skills/dce)                                                       | Detect and eliminate dead code in TypeScript projects            |
 | [functional-cohesion-components](skills/functional-cohesion-components) | Guide frontend component design using functional cohesion        |
 | [gha-lint](skills/gha-lint)                                             | Lint and secure GitHub Actions workflows                         |
@@ -102,8 +103,8 @@ waza run
 # Single skill (mock engine)
 waza run youtube-transcript
 
-# Single skill with real model (requires copilot login)
-waza run youtube-transcript --model gpt-5-mini --executor copilot-sdk
+# Explicit real-model suite, when provided (requires copilot login)
+waza run evals/create-web-api/eval.semantic.yaml --model claude-sonnet-4.6
 ```
 
 ### Run CI workflow locally (actrun)

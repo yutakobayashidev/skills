@@ -1,0 +1,79 @@
+openapi: 3.0.3
+info:
+  title: Accounts API
+  version: 1.0.0
+servers:
+  - url: /v1
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    User:
+      type: object
+      required: [id, email]
+      properties:
+        id: { type: string }
+        email: { type: string, format: email }
+    Error:
+      type: object
+      required: [message]
+      properties:
+        message: { type: string }
+security:
+  - bearerAuth: []
+paths:
+  /users/{user_id}:
+    get:
+      operationId: getUser
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: User
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/User" }
+        "404":
+          description: Missing user
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+  /users:
+    post:
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+      responses:
+        "200":
+          description: Created user
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/User" }
+  /reports:
+    get:
+      operationId: listReports
+      parameters:
+        - name: access_token
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: All reports
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { type: object }

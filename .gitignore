@@ -4,6 +4,7 @@ _build/
 coverage.txt
 *.exe
 .pre-commit-config.yaml
+.worktrees/
 
 # Agent skill install dirs
 .agent/

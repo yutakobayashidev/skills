@@ -1,0 +1,18 @@
+id: create-web-api-audit-001
+name: Whole API Audit
+description: Audit definition, implementation, and documentation with source-located findings and coverage gaps.
+tags:
+  - audit
+  - repository
+inputs:
+  prompt: "Perform a read-only whole-API audit of the supplied Accounts API definition, implementation, and documentation. Return a concise report that an implementation team can act on."
+  files:
+    - path: inconsistent-api/openapi.yaml
+    - path: inconsistent-api/routes.ts
+    - path: inconsistent-api/README.md
+expected:
+  output_contains:
+    - "inconsistent-api/openapi.yaml"
+    - "inconsistent-api/routes.ts"
+  outcomes:
+    - type: task_completed

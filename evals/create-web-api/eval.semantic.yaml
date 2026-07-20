@@ -1,0 +1,23 @@
+name: create-web-api-semantic-eval
+description: Real-engine semantic checks for Web API design, audit, and negative routing behavior.
+skill: create-web-api
+version: "1.0"
+config:
+  executor: copilot-sdk
+  trials_per_task: 3
+  timeout_seconds: 300
+  parallel: false
+  model: claude-sonnet-4.6
+metrics:
+  - name: task_completion
+    weight: 1.0
+    threshold: 0.8
+    description: Did the skill complete the assigned task?
+graders:
+  - type: code
+    name: has_output
+    config:
+      assertions:
+        - "len(output) > 0"
+tasks:
+  - "tasks/semantic/*.yaml"
