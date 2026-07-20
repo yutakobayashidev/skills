@@ -113,13 +113,20 @@ skills/create-web-api/
     └── web-api-guidelines.md
 
 evals/create-web-api/
+├── README.md
 ├── eval.yaml
+├── eval.semantic.yaml
 ├── fixtures/
 │   └── inconsistent-api/
 └── tasks/
     ├── audit-existing-api.yaml
     ├── basic-usage.yaml
     ├── edge-case.yaml
+    ├── semantic/
+    │   ├── audit-existing-api.yaml
+    │   ├── basic-usage.yaml
+    │   ├── edge-case.yaml
+    │   └── should-not-trigger.yaml
     └── should-not-trigger.yaml
 ```
 
@@ -146,19 +153,23 @@ It will cite the source article and preserve its scope caveat: the recommendatio
 
 ## Evaluation Strategy
 
-Use Waza with `trials_per_task: 3` and deterministic text or regex graders first.
+Use two explicit Waza modes instead of inferring the executor from model-controlled output:
+
+- `eval.yaml` uses the mock executor with `trials_per_task: 3` to validate task discovery, fixtures, and grader plumbing in CI. It does not claim response-quality coverage.
+- `eval.semantic.yaml` uses a real executor and deterministic task-level graders with no mock-output bypass. Saved real-engine results may be regraded offline with the same spec.
 
 - `basic-usage`: a small resource-oriented API request must produce an endpoint table, schemas, errors, and examples without implementation code.
 - `edge-case`: a payment-like or job-processing API must address idempotency, authorization, retries, concurrency, and asynchronous status handling.
 - `audit-existing-api`: a fixture with inconsistent OpenAPI, route, and authorization behavior must produce categorized, source-located findings and coverage gaps without modifying files.
-- `should-not-trigger`: an implementation-only or GraphQL-specific request must not be reframed as a REST contract design task.
+- `should-not-trigger`: an implementation-only GraphQL request must produce resolver/test implementation while excluding REST endpoints, OpenAPI, and contract redesign.
 
 The RED baseline will run equivalent tasks without the new skill and record omissions or output-shape failures. GREEN will run the same scenarios with the skill. The skill text will be revised only to address observed gaps, keeping it concise.
 
 ## Validation
 
 - Run the skill package validator against `skills/create-web-api`.
-- Run the new Waza evaluation with the mock engine.
+- Run `eval.yaml` with the mock engine for structural coverage.
+- Run or regrade fresh-agent outputs with `eval.semantic.yaml`, including adversarial prompt-echo and REST-redesign failures.
 - Run repository-level checks relevant to skill discovery and evaluation structure.
 - Inspect generated metadata and confirm its default prompt names `$create-web-api`.
 - Review `README.md`, `AGENTS.md`, `CLAUDE.md`, and `docs/` for documentation impact before committing the implementation.

@@ -1,10 +1,10 @@
-name: create-web-api-eval
-description: Fast mock-executor checks for create-web-api task and fixture plumbing.
+name: create-web-api-semantic-eval
+description: Real-engine semantic checks for Web API design, audit, and negative routing behavior.
 skill: create-web-api
 version: "1.0"
 config:
-  executor: mock
-  trials_per_task: 3
+  executor: copilot-sdk
+  trials_per_task: 1
   timeout_seconds: 300
   parallel: false
   model: claude-sonnet-4.6
@@ -20,4 +20,4 @@ graders:
       assertions:
         - "len(output) > 0"
 tasks:
-  - "tasks/*.yaml"
+  - "tasks/semantic/*.yaml"

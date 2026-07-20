@@ -1,0 +1,34 @@
+id: create-web-api-audit-001
+name: Whole API Audit
+description: Audit definition, implementation, and documentation with source-located findings and coverage gaps.
+tags:
+  - audit
+  - repository
+inputs:
+  prompt: "Perform a read-only whole-API audit of the supplied Accounts API definition, implementation, and documentation. Return a concise report that an implementation team can act on."
+  files:
+    - path: inconsistent-api/openapi.yaml
+    - path: inconsistent-api/routes.ts
+    - path: inconsistent-api/README.md
+expected:
+  output_contains:
+    - "inconsistent-api/openapi.yaml"
+    - "inconsistent-api/routes.ts"
+  outcomes:
+    - type: task_completed
+graders:
+  - name: audit_fixture_findings
+    type: code
+    config:
+      assertions:
+        - "('routes.ts:9' in output or 'routes.ts:7-9' in output) and ('openapi.yaml:59' in output or '#/paths/~1users/post/responses/200' in output) and '200' in output and '201' in output"
+        - "'routes.ts:3' in output and ('openapi.yaml:19' in output or '#/components/schemas/Error' in output) and 'message' in output.lower() and 'code' in output.lower()"
+        - "'access_token' in output and ('openapi.yaml:68' in output or '#/paths/~1reports/get/parameters' in output) and 'query' in output.lower()"
+        - "('listall' in output.lower() or 'routes.ts:13' in output or 'README.md:5' in output) and 'pagination' in output.lower()"
+  - name: audit_report_contract
+    type: code
+    config:
+      assertions:
+        - "re.search(r'(?is)###\\s*\\[P[0-3]\\].*?-\\s*Category:.*?-\\s*Evidence:.*?-\\s*Recommendation:.*?-\\s*Confidence:', output) is not None"
+        - "'Scope and coverage' in output and 'Executive summary' in output and 'Prioritized findings' in output"
+        - "'Improvement opportunities' in output and 'Coverage gaps' in output"
