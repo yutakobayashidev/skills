@@ -1,0 +1,21 @@
+id: create-web-api-audit-001
+name: Whole API Audit
+description: Audit definition, implementation, and documentation with source-located findings and coverage gaps.
+tags:
+  - audit
+  - repository
+inputs:
+  prompt: "Audit the entire REST API represented by inconsistent-api/openapi.yaml, inconsistent-api/routes.ts, and inconsistent-api/README.md. Report scope and coverage, prioritize findings under Contract correctness, Consistency & DX, Security, Reliability & operations, and Compatibility & maintainability, cite path:line or OpenAPI JSON Pointer evidence, separate opportunities from confirmed findings, list Coverage gaps, and do not edit files."
+  files:
+    - path: inconsistent-api/openapi.yaml
+    - path: inconsistent-api/routes.ts
+    - path: inconsistent-api/README.md
+expected:
+  output_contains:
+    - "inconsistent-api/openapi.yaml"
+    - "inconsistent-api/routes.ts"
+    - "Contract correctness"
+    - "Security"
+    - "Coverage gaps"
+  outcomes:
+    - type: task_completed
