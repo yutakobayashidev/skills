@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create Web API"
+  short_description: "Design consistent REST-like Web API contracts"
+  default_prompt: "Use $create-web-api to design a REST-like Web API contract for this service."
