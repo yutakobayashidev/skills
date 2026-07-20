@@ -85,4 +85,4 @@ Use this finding shape:
 - Verify: Evidence still needed, or `Confirmed`
 ```
 
-Separate confirmed defects from opportunities. Do not modify files unless the user separately asks for fixes. When the bundled rubric does not cover a recommendation, label it as independent engineering judgment.
+Only evidence-backed defects may appear under Prioritized findings. Put every unconfirmed hypothesis under Improvement opportunities and state the evidence needed to promote it to a finding. Do not modify files unless the user separately asks for fixes. When the bundled rubric does not cover a recommendation, label it as independent engineering judgment.

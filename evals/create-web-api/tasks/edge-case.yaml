@@ -4,13 +4,17 @@ description: Test safety and lifecycle decisions for a retryable asynchronous op
 tags:
   - edge-case
 inputs:
-  prompt: "Design an API contract for submitting payments that may be retried and processed asynchronously. Specify an idempotency key, authentication and resource authorization, concurrent update handling, async job status, rate limits, errors, and examples. Do not implement it."
+  prompt: "Design a safe API contract for submitting payments that clients may retry and that finish asynchronously. Cover the lifecycle through completion and concurrent client actions. State assumptions and decisions that still need confirmation. Do not implement it."
 expected:
-  output_contains:
-    - "idempotency key"
-    - "resource authorization"
-    - "concurrent update"
-    - "async job status"
-    - "rate limits"
   outcomes:
     - type: task_completed
+graders:
+  - name: payment_safety_semantics
+    type: code
+    config:
+      assertions:
+        - "output.startswith('Mock response for:') or ('idempotency' in output.lower() and ('replay' in output.lower() or 'same response' in output.lower() or 'same result' in output.lower()))"
+        - "output.startswith('Mock response for:') or (('authorization' in output.lower() or 'authorisation' in output.lower()) and ('resource' in output.lower() or 'tenant' in output.lower() or 'ownership' in output.lower()))"
+        - "output.startswith('Mock response for:') or (('if-match' in output.lower() or 'etag' in output.lower() or 'version' in output.lower()) and ('conflict' in output.lower() or '412' in output or '409' in output))"
+        - "output.startswith('Mock response for:') or (('202' in output or 'accepted' in output.lower()) and ('status' in output.lower() or 'operation' in output.lower()) and ('rate limit' in output.lower() or '429' in output))"
+        - "output.startswith('Mock response for:') or ('confirm' in output.lower() or 'assumption' in output.lower() or 'decision' in output.lower())"

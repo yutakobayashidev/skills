@@ -1,5 +1,5 @@
 name: create-web-api-eval
-description: Evaluation suite for create-web-api.
+description: Mock-safe plumbing checks plus real-engine semantic checks for Web API design and audit behavior.
 skill: create-web-api
 version: "1.0"
 config:

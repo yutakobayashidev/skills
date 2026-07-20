@@ -5,7 +5,7 @@ tags:
   - audit
   - repository
 inputs:
-  prompt: "Audit the entire REST API represented by inconsistent-api/openapi.yaml, inconsistent-api/routes.ts, and inconsistent-api/README.md. Report scope and coverage, prioritize findings under Contract correctness, Consistency & DX, Security, Reliability & operations, and Compatibility & maintainability, cite path:line or OpenAPI JSON Pointer evidence, separate opportunities from confirmed findings, list Coverage gaps, and do not edit files."
+  prompt: "Perform a read-only whole-API audit of the supplied Accounts API definition, implementation, and documentation. Return a concise report that an implementation team can act on."
   files:
     - path: inconsistent-api/openapi.yaml
     - path: inconsistent-api/routes.ts
@@ -14,8 +14,23 @@ expected:
   output_contains:
     - "inconsistent-api/openapi.yaml"
     - "inconsistent-api/routes.ts"
-    - "Contract correctness"
-    - "Security"
-    - "Coverage gaps"
   outcomes:
     - type: task_completed
+graders:
+  # Mock output is exempt because it echoes fixtures verbatim. On a real-engine
+  # run these checks require fixture-specific diagnoses, not prompt vocabulary.
+  - name: audit_fixture_findings
+    type: code
+    config:
+      assertions:
+        - "output.startswith('Mock response for:') or (('routes.ts:9' in output or 'routes.ts:7-9' in output) and ('openapi.yaml:59' in output or '#/paths/~1users/post/responses/200' in output) and '200' in output and '201' in output)"
+        - "output.startswith('Mock response for:') or ('routes.ts:3' in output and ('openapi.yaml:19' in output or '#/components/schemas/Error' in output) and 'message' in output.lower() and 'code' in output.lower())"
+        - "output.startswith('Mock response for:') or ('access_token' in output and ('openapi.yaml:68' in output or '#/paths/~1reports/get/parameters' in output) and 'query' in output.lower())"
+        - "output.startswith('Mock response for:') or (('listall' in output.lower() or 'routes.ts:13' in output or 'README.md:5' in output) and 'pagination' in output.lower())"
+  - name: audit_report_contract
+    type: code
+    config:
+      assertions:
+        - "output.startswith('Mock response for:') or re.search(r'(?is)###\\s*\\[P[0-3]\\].*?-\\s*Category:.*?-\\s*Evidence:.*?-\\s*Recommendation:.*?-\\s*Confidence:', output) is not None"
+        - "output.startswith('Mock response for:') or ('Scope and coverage' in output and 'Executive summary' in output and 'Prioritized findings' in output)"
+        - "output.startswith('Mock response for:') or ('Improvement opportunities' in output and 'Coverage gaps' in output)"
