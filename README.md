@@ -10,6 +10,7 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 | [babashka-nrepl](skills/babashka-nrepl)                                 | Write Babashka scripts with nREPL-driven development             |
 | [bird](skills/bird)                                                     | Read, search, post, and interact with X/Twitter via CLI          |
 | [check-similarity](skills/check-similarity)                             | Detect duplicate TypeScript/JavaScript code using AST comparison |
+| [create-web-api](skills/create-web-api)                                 | Design and audit REST-like Web API contracts                     |
 | [dce](skills/dce)                                                       | Detect and eliminate dead code in TypeScript projects            |
 | [functional-cohesion-components](skills/functional-cohesion-components) | Guide frontend component design using functional cohesion        |
 | [gha-lint](skills/gha-lint)                                             | Lint and secure GitHub Actions workflows                         |

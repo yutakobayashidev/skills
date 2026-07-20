@@ -1,5 +1,7 @@
 # Create Web API Implementation Plan
 
+> **Scope update:** Task 1 remains the original design-mode baseline. After whole-API auditing was added, [2026-07-20-create-web-api-audit.md](2026-07-20-create-web-api-audit.md) superseded Tasks 2 and 3.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add and verify a `create-web-api` skill that produces compact, implementation-ready REST-like Web API specifications.
