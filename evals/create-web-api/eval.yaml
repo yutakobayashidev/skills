@@ -1,0 +1,23 @@
+name: create-web-api-eval
+description: Evaluation suite for create-web-api.
+skill: create-web-api
+version: "1.0"
+config:
+  executor: mock
+  trials_per_task: 3
+  timeout_seconds: 300
+  parallel: false
+  model: claude-sonnet-4.6
+metrics:
+  - name: task_completion
+    weight: 1.0
+    threshold: 0.8
+    description: Did the skill complete the assigned task?
+graders:
+  - type: code
+    name: has_output
+    config:
+      assertions:
+        - "len(output) > 0"
+tasks:
+  - "tasks/*.yaml"

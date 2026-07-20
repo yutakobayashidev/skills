@@ -1,0 +1,14 @@
+id: create-web-api-negative-001
+name: Implementation-only GraphQL Request
+description: Avoid replacing an already-fixed GraphQL contract with a REST design.
+tags:
+  - anti-trigger
+  - negative-test
+inputs:
+  prompt: "Implement a GraphQL resolver in TypeScript for a user profile query. The schema and API contract are already fixed; only write the resolver and tests."
+expected:
+  output_not_contains:
+    - "REST specification"
+    - "Endpoint table"
+  outcomes:
+    - type: task_completed

@@ -1,0 +1,16 @@
+id: create-web-api-basic-001
+name: Basic REST API Contract
+description: Test the complete output shape for a small resource-oriented API.
+tags:
+  - basic
+  - happy-path
+inputs:
+  prompt: "Design a REST API contract for a team bookmarks service. Cover endpoint table, request/response fields, status codes, error envelope, pagination, auth assumptions, and example calls. Do not write implementation code."
+expected:
+  output_contains:
+    - "endpoint table"
+    - "status codes"
+    - "error envelope"
+    - "example"
+  outcomes:
+    - type: task_completed
