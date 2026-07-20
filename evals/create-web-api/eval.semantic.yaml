@@ -4,7 +4,7 @@ skill: create-web-api
 version: "1.0"
 config:
   executor: copilot-sdk
-  trials_per_task: 1
+  trials_per_task: 3
   timeout_seconds: 300
   parallel: false
   model: claude-sonnet-4.6

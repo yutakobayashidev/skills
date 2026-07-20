@@ -156,7 +156,7 @@ It will cite the source article and preserve its scope caveat: the recommendatio
 Use two explicit Waza modes instead of inferring the executor from model-controlled output:
 
 - `eval.yaml` uses the mock executor with `trials_per_task: 3` to validate task discovery, fixtures, and grader plumbing in CI. It does not claim response-quality coverage.
-- `eval.semantic.yaml` uses a real executor and deterministic task-level graders with no mock-output bypass. Saved real-engine results may be regraded offline with the same spec.
+- `eval.semantic.yaml` uses a real executor with `trials_per_task: 3` and deterministic task-level graders with no mock-output bypass. Saved real-engine results may be regraded offline with the same spec.
 
 - `basic-usage`: a small resource-oriented API request must produce an endpoint table, schemas, errors, and examples without implementation code.
 - `edge-case`: a payment-like or job-processing API must address idempotency, authorization, retries, concurrency, and asynchronous status handling.

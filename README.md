@@ -103,8 +103,8 @@ waza run
 # Single skill (mock engine)
 waza run youtube-transcript
 
-# Single skill with real model (requires copilot login)
-waza run youtube-transcript --model gpt-5-mini --executor copilot-sdk
+# Explicit real-model suite, when provided (requires copilot login)
+waza run evals/create-web-api/eval.semantic.yaml --model claude-sonnet-4.6
 ```
 
 ### Run CI workflow locally (actrun)

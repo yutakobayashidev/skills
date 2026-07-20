@@ -2,7 +2,7 @@
 
 `eval.yaml` uses Waza's mock executor for fast CI checks that tasks and fixtures load correctly. It does not claim to measure response quality.
 
-`eval.semantic.yaml` uses a real executor and output-only graders with no model-controlled bypass:
+`eval.semantic.yaml` uses a real executor, three trials per task, and output-only graders with no model-controlled bypass:
 
 ```bash
 waza run evals/create-web-api/eval.semantic.yaml --model claude-sonnet-4.6
