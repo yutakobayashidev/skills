@@ -1,0 +1,10 @@
+id: bird-deep-research-003
+name: Single Post Read
+description: A single-post read should use the ordinary Bird skill.
+tags:
+- anti-trigger
+inputs:
+  prompt: Read this one X post with Bird.
+expected:
+  output_not_contains:
+  - deep research

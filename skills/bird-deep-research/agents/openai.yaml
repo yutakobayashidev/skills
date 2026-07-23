@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bird Deep Research"
+  short_description: "Collect, classify, and visualize large X research datasets"
+  default_prompt: "Use $bird-deep-research to collect a large X dataset with Bird, classify the findings, and build a source-linked dashboard."

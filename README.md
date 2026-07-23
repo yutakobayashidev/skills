@@ -9,6 +9,7 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 | [adr](skills/adr)                                                       | Draft or refine architecture decision records                    |
 | [babashka-nrepl](skills/babashka-nrepl)                                 | Write Babashka scripts with nREPL-driven development             |
 | [bird](skills/bird)                                                     | Read, search, post, and interact with X/Twitter via CLI          |
+| [bird-deep-research](skills/bird-deep-research)                         | Build resumable X research datasets and source-linked dashboards |
 | [check-similarity](skills/check-similarity)                             | Detect duplicate TypeScript/JavaScript code using AST comparison |
 | [create-web-api](skills/create-web-api)                                 | Design and audit REST-like Web API contracts                     |
 | [dce](skills/dce)                                                       | Detect and eliminate dead code in TypeScript projects            |

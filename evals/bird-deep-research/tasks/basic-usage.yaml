@@ -1,0 +1,14 @@
+id: bird-deep-research-001
+name: Arbitrary Research Brief
+description: Turn a user-defined large-scale X research brief into a resumable workflow.
+tags:
+- basic
+- large-scale
+inputs:
+  prompt: Use Bird to collect 10,000 public X posts matching my own queries, classify them with my supplied rubric, and create a dashboard with original-post views. Use a long delay between requests.
+expected:
+  output_contains:
+  - Bird
+  - dashboard
+  outcomes:
+  - type: task_completed

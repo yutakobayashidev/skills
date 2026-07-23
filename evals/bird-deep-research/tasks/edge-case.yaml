@@ -1,0 +1,14 @@
+id: bird-deep-research-002
+name: Resume After Rate Limit
+description: Resume a large collection after interruption without losing or duplicating posts.
+tags:
+- edge-case
+- resume
+inputs:
+  prompt: My 25,000-post Bird research collection hit a rate limit halfway through. Resume from checkpoints with a base delay plus a large periodic cooldown and do not duplicate posts.
+expected:
+  output_contains:
+  - Bird
+  - checkpoint
+  outcomes:
+  - type: task_completed
