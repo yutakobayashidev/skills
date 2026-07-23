@@ -1,0 +1,4 @@
+interface:
+  display_name: "メールノイズ監査"
+  short_description: "頻繁で低価値なメールを見つけ、安全な解除候補を提案する"
+  default_prompt: "Use $audit-email-noise to review recurring Gmail noise and propose safe unsubscribe candidates."
