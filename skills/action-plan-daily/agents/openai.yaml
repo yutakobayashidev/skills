@@ -1,0 +1,4 @@
+interface:
+  display_name: "デイリーアクションプラン"
+  short_description: "メールとSlackから今日の行動を最大3件に絞って計画する"
+  default_prompt: "Use $action-plan-daily to review today’s inboxes and save a focused daily action plan."

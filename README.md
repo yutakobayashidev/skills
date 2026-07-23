@@ -6,6 +6,7 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 
 | Skill                                                                   | Description                                                      |
 | ----------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| [action-plan-daily](skills/action-plan-daily)                           | Turn Gmail and Slack into a focused daily action plan            |
 | [adr](skills/adr)                                                       | Draft or refine architecture decision records                    |
 | [babashka-nrepl](skills/babashka-nrepl)                                 | Write Babashka scripts with nREPL-driven development             |
 | [bird](skills/bird)                                                     | Read, search, post, and interact with X/Twitter via CLI          |
