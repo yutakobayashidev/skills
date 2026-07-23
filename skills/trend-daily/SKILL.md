@@ -1,9 +1,9 @@
 ---
-name: neta-trend-daily
-description: "トレンドネタ収集"
+name: trend-daily
+description: "トレンド収集"
 ---
 
-# トレンドネタ収集
+# トレンド収集
 
 はてなブックマークIT人気エントリーとHacker Newsの人気記事を収集し、`~/ghq/git.yutakobayashi.com/yuta/life/ideas/daily/YYYYMMDD-trend.md` に保存する。
 
@@ -54,13 +54,13 @@ description: "トレンドネタ収集"
 - **重要**: WebFetchツールはreddit.comをブロックするため、**Bashツールでcurlコマンドを使用**すること
 - 各サブレッドから `/hot.json?t=day&limit=10` で上位10件を取得
 - **old.reddit.com**を使用（www.reddit.comではない）
-- User-Agentヘッダーを設定: `"User-Agent: neta-trend-collector/1.0 (trend analysis tool)"`
+- User-Agentヘッダーを設定: `"User-Agent: trend-collector/1.0 (trend analysis tool)"`
 - 各記事の**タイトル、Redditコメントページの完全URL、投票数（ups）、コメント数**を取得
 - **タイトルは日本語に翻訳して出力**
 
 取得例（Bashツールで実行）:
 ```bash
-curl -s -H "User-Agent: neta-trend-collector/1.0 (trend analysis tool)" \
+curl -s -H "User-Agent: trend-collector/1.0 (trend analysis tool)" \
   "https://old.reddit.com/r/programming/hot.json?t=day&limit=10" | \
   jq -r '.data.children[] | "\(.data.title)|\(.data.ups)|\(.data.num_comments)|https://www.reddit.com\(.data.permalink)"'
 ```
@@ -135,12 +135,12 @@ OSS/個人開発系（4サブレッド）:
 
 ### 3. 出力
 
-**まず「ネタ収集完了。」というメッセージを返してから、結果を `~/ghq/git.yutakobayashi.com/yuta/life/ideas/daily/YYYYMMDD-trend.md` に保存。**
+**まず「トレンド収集完了。」というメッセージを返してから、結果を `~/ghq/git.yutakobayashi.com/yuta/life/ideas/daily/YYYYMMDD-trend.md` に保存。**
 
 以下のフォーマットで出力：
 
 ```markdown
-# トレンドネタ: YYYY-MM-DD
+# トレンド: YYYY-MM-DD
 
 ## はてブIT（日本市場）
 

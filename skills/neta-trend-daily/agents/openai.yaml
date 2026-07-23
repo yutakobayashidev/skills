@@ -1,4 +1,0 @@
-interface:
-  display_name: "トレンドネタ収集"
-  short_description: "技術トレンドを収集・分析し日次Markdownへ保存"
-  default_prompt: "Use $neta-trend-daily to collect today’s technical trends and save the daily Markdown report."
