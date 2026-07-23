@@ -5,7 +5,7 @@ description: "トレンドネタ収集"
 
 # トレンドネタ収集
 
-はてなブックマークIT人気エントリーとHacker Newsの人気記事を収集し、`ideas/daily/YYYYMMDD-trend.md` に保存する。
+はてなブックマークIT人気エントリーとHacker Newsの人気記事を収集し、`~/ghq/git.yutakobayashi.com/yuta/life/ideas/daily/YYYYMMDD-trend.md` に保存する。
 
 ## 実行手順
 
@@ -136,7 +136,7 @@ OSS/個人開発系（4サブレッド）:
 
 ### 3. 出力
 
-**まず「ネタ収集完了。」というメッセージを返してから、結果を `ideas/daily/YYYYMMDD-trend.md` に保存。**
+**まず「ネタ収集完了。」というメッセージを返してから、結果を `~/ghq/git.yutakobayashi.com/yuta/life/ideas/daily/YYYYMMDD-trend.md` に保存。**
 
 以下のフォーマットで出力：
 
