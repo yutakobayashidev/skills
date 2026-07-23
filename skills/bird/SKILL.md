@@ -20,7 +20,7 @@ user-invocable: true
 
 # bird
 
-Fast X/Twitter CLI using GraphQL.
+Fast X/Twitter CLI using GraphQL through twitter safe relay.
 
 ## Install
 
@@ -60,6 +60,7 @@ fi
 ```bash
 bird whoami
 bird check
+bird help [command]
 bird query-ids --fresh
 ```
 
@@ -68,7 +69,7 @@ bird query-ids --fresh
 ```bash
 bird read <url-or-id>
 bird <url-or-id>
-bird thread <url-or-id>
+bird thread <url-or-id> --max-pages 3 --json
 bird replies <url-or-id>
 ```
 
@@ -80,24 +81,30 @@ bird replies <url-or-id>
 bird home
 bird home --following
 bird user-tweets @handle -n 20
-bird mentions
-bird mentions --user @handle
+bird mentions -n 5
+bird mentions --user @handle -n 5
 ```
 
 ## Search
 
 ```bash
 bird search "query" -n 10
+bird search "AI lang:ja" --product Top -n 20
+bird search "from:yuta" --product Latest -n 20
 bird search "from:yuta" --all --max-pages 3
 ```
+
+`Latest` is the default search product. Use `Top` for ranked results.
 
 ## News And Trending
 
 ```bash
 bird news -n 10
 bird news --ai-only
-bird news --sports
-bird news --with-tweets
+bird news --news-only --ai-only -n 10
+bird news --sports --entertainment -n 20
+bird news --with-tweets --tweets-per-item 3 -n 10
+bird news --trending-only --json
 bird trending
 ```
 
@@ -107,6 +114,7 @@ bird trending
 bird lists
 bird lists --member-of
 bird list-timeline <id> -n 20
+bird list-timeline https://x.com/i/lists/<id> --max-pages 3 --json
 ```
 
 ## Bookmarks And Likes
@@ -114,11 +122,17 @@ bird list-timeline <id> -n 20
 ```bash
 bird bookmarks -n 10
 bird bookmarks --folder-id <id>
+bird bookmarks --all --max-pages 3 --json
+bird bookmarks --expand-root-only
 bird bookmarks --include-parent
 bird bookmarks --author-chain
+bird bookmarks --author-only
 bird bookmarks --full-chain-only
-bird unbookmark <url-or-id>
+bird bookmarks --full-chain-only --include-ancestor-branches
+bird bookmarks --thread-meta --sort-chronological --json
+bird unbookmark <url-or-id> <url-or-id>
 bird likes -n 10
+bird likes --all --max-pages 3 --json
 ```
 
 ## Social Graph
@@ -127,6 +141,8 @@ bird likes -n 10
 bird following -n 20
 bird followers -n 20
 bird following --user <id>
+bird user @handle --json
+bird profiles @handle <user-id> --json
 bird about @handle
 ```
 
@@ -159,16 +175,18 @@ Use up to 4 images, or 1 video.
 
 ## Pagination
 
-Commands supporting pagination: `replies`, `thread`, `search`, `bookmarks`, `likes`, `list-timeline`, `following`, `followers`, `user-tweets`.
+Commands supporting pagination: `home`, `replies`, `thread`, `search`, `bookmarks`, `likes`, `list-timeline`, `following`, `followers`, `user-tweets`.
 
 ```bash
 bird bookmarks --all
-bird bookmarks --max-pages 3
+bird bookmarks --all --max-pages 3
 bird bookmarks --cursor <cursor>
 bird replies <id> --all --delay 1000
 bird replies <id> --max-pages 3
 bird replies <id> --cursor <cursor>
 ```
+
+For `search`, `bookmarks`, and `likes`, use `--max-pages` with `--all` or `--cursor`. For `thread` and `list-timeline`, `--max-pages` implies pagination.
 
 ## Output Options
 
@@ -184,10 +202,14 @@ bird replies <id> --cursor <cursor>
 ## Global Options
 
 ```bash
+--relay-base-url <url>
+--profile-name <name>
 --timeout <ms>
 ```
 
-Environment variables: `TWITTER_RELAY_BASE_URL`, `BIRD_TIMEOUT_MS`, `BIRD_QUOTE_DEPTH`.
+Config precedence: CLI flags > environment variables > `./.birdrc.json5` > `~/.config/bird/config.json5`.
+
+Environment variables: `TWITTER_RELAY_BASE_URL`, `BIRD_PROFILE_NAME`, `BIRD_TIMEOUT_MS`, `BIRD_QUOTE_DEPTH`, `NO_COLOR`.
 
 ## Troubleshooting
 
