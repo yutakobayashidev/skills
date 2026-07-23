@@ -18,6 +18,7 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 | [good-first-issue-creator](skills/good-first-issue-creator)             | Draft newcomer-friendly GitHub issues                            |
 | [grok-search](skills/grok-search)                                       | Search real-time reactions and discussions on X with Grok        |
 | [markitdown](skills/markitdown)                                         | Convert files to Markdown using Microsoft's markitdown CLI       |
+| [neta-trend-daily](skills/neta-trend-daily)                             | Collect and analyze daily technology trends                     |
 | [nextjs-onboarding](skills/nextjs-onboarding)                           | Audit baseline repo hygiene when joining a Next.js project       |
 | [oura-daily-watch](skills/oura-daily-watch)                             | Build and run a daily Oura + Discord behavior monitor            |
 | [repo-creator](skills/repo-creator)                                     | Create new GitHub repositories through OpenTofu                  |
