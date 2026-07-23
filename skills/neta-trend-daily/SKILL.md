@@ -27,14 +27,13 @@ description: "トレンドネタ収集"
 以下のサイトから最新のトレンド情報を取得：
 
 **日本市場（はてブIT）**
-- https://b.hatena.ne.jp/hotentry/it
-- https://b.hatena.ne.jp/hotentry/it/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0
-- https://b.hatena.ne.jp/hotentry/it/AI%E3%83%BB%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92
-- https://b.hatena.ne.jp/hotentry/it/%E3%81%AF%E3%81%A6%E3%81%AA%E3%83%96%E3%83%AD%E3%82%B0%EF%BC%88%E3%83%86%E3%82%AF%E3%83%8E%E3%83%AD%E3%82%B8%E3%83%BC%EF%BC%89
-- https://b.hatena.ne.jp/hotentry/it/%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3%E6%8A%80%E8%A1%93
-- https://b.hatena.ne.jp/hotentry/it/%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2
+- 公式RSS `https://b.hatena.ne.jp/hotentry/it.rss` を取得する
+- RSS 1.0の各 `item` から `title`、`link`（元記事URL）、`hatena:bookmarkcount`（ブックマーク数）、`dc:subject`（タグ）を抽出する
+- `dc:subject` とタイトル・概要を使って、AI、プログラミング、セキュリティ、エンジニアリングなどのカテゴリに分類する
+- はてなブックマークのHTML人気エントリーページは取得元に使わない
+- ブックマーク数を再確認する必要がある場合は、公式の `https://bookmark.hatenaapis.com/count/entries` にURLを最大50件まで指定する
 - 各エントリーの**タイトル、元記事URL、ブックマーク数**を必ず取得すること
-- はてブのエントリーページURLではなく、リンク先の元記事URLを抽出
+- はてブのエントリーページURLではなく、RSSの `link` にある元記事URLを使用する
 
 **グローバル（Hacker News）**
 - [Hacker News公式API](https://github.com/HackerNews/API)を使用する
@@ -205,7 +204,7 @@ OSS/個人開発系（4サブレッド）:
 
 ## 注意事項
 
-- はてブと追加セキュリティソースはWebFetchツール、Hacker Newsは公式JSON APIで取得
+- はてブは公式RSS、追加セキュリティソースはWebFetchツール、Hacker Newsは公式JSON APIで取得
 - **すべての記事にURLリンクを必ず含める（リンクなしは不可）**
 - **はてブは元記事のURLを必ず取得**（はてブページURLではなく）
 - **Hacker NewsはHNコメントページURL（`item?id=`形式）を使用**（元記事URLではなく）
