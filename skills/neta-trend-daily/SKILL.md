@@ -37,8 +37,11 @@ description: "トレンドネタ収集"
 - はてブのエントリーページURLではなく、リンク先の元記事URLを抽出
 
 **グローバル（Hacker News）**
-- https://news.ycombinator.com/
-- 各記事の**タイトル、HNコメントページURL（`https://news.ycombinator.com/item?id=XXXXX`形式）、ポイント数**を取得
+- [Hacker News公式API](https://github.com/HackerNews/API)を使用する
+- `https://hacker-news.firebaseio.com/v0/topstories.json` から上位30件のIDを取得する
+- 各IDについて `https://hacker-news.firebaseio.com/v0/item/<id>.json` を取得し、`type` が `story`、かつ `deleted` と `dead` が `true` でない項目を使用する
+- 各記事の`title`をタイトル、`score`をポイント数として使用する
+- `id`からHNコメントページURL（`https://news.ycombinator.com/item?id=<id>`形式）を組み立てる
 - **元記事URLではなくHNのコメントページURLを使用すること**（コメントも確認できるようにするため）
 - **タイトルは日本語に翻訳して出力**
 
@@ -196,7 +199,7 @@ OSS/個人開発系（4サブレッド）:
 
 ## 注意事項
 
-- WebFetchツールを使用して情報を取得
+- はてブと追加セキュリティソースはWebFetchツール、Hacker Newsは公式JSON API、Redditは指定のcurlコマンドで取得
 - **すべての記事にURLリンクを必ず含める（リンクなしは不可）**
 - **はてブは元記事のURLを必ず取得**（はてブページURLではなく）
 - **Hacker NewsはHNコメントページURL（`item?id=`形式）を使用**（元記事URLではなく）
