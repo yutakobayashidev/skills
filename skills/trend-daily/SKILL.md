@@ -44,6 +44,22 @@ description: "トレンド収集"
 - **元記事URLではなくHNのコメントページURLを使用すること**（コメントも確認できるようにするため）
 - **タイトルは日本語に翻訳して出力**
 
+**GitHub Trending（グローバル新規リポジトリ）**
+- **ax CLI** を使用して `https://github.com/trending` から取得する
+- コマンド:
+  ```bash
+  ax https://github.com/trending 'article.Box-row' \
+    --row 'name=h2.h3.lh-condensed a.Link, stars=span.d-inline-block.float-sm-right, desc=p.col-9.color-fg-muted.my-1.tmp-pr-4, lang=div.f6.color-fg-muted.mt-2 span.d-inline-block.ml-0, url=h2.h3.lh-condensed a.Link@href' \
+    --json
+  ```
+- 言語別ページも同様に取得可能:
+  - `https://github.com/trending/typescript`
+  - `https://github.com/trending/rust`
+  - `https://github.com/trending/python`
+- 各リポジトリの `name`（`owner / repo` 形式）、`stars`（今日獲得スター数）、`desc`（概要）、`lang`（言語）、`url`（相対パス `/owner/repo`）を抽出
+- `url` は `https://github.com` をプレフィックスして完全URLにすること
+- 興味領域に合わせて **TypeScript・Rust・Python** の言語別ページを優先してチェック
+
 **セキュリティ（追加ソース）**
 - https://www.aikido.dev/blog - セキュリティ研究開発者向けのセキュリティ情報
 - https://www.wiz.io/blog - クラウドセキュリティ
@@ -123,6 +139,12 @@ OSS/個人開発系（4サブレッド）:
 - セキュリティ関連（脆弱性、攻撃手法、インシデント）
 - 議論を呼んでいるトピック（ポイント数が高い）
 
+**GitHub Trending**
+- 今日急上昇しているリポジトリ（stars today が高いもの）
+- AIエージェント・MCP・コーディングツール関連の新規プロジェクト
+- Rust/TypeScript/Python の注目ライブラリ・ツール
+- スター数の絶対値ではなく「今日の増加数」で評価
+
 <!-- Redditは403エラーのため分析対象から一時除外。
 **Reddit（13サブレッド）**
 - セキュリティ系：最新の脅威、実践的な攻撃・防御手法
@@ -173,6 +195,19 @@ OSS/個人開発系（4サブレッド）:
 1. [タイトル](HNコメントページURL) (XXXpt) - 概要
 2. ...
 
+## GitHub Trending（グローバル）
+
+### 注目トピック
+
+| リポジトリ | 言語 | 今日のスター | 興味度 | カテゴリ | メモ |
+|-----------|------|-------------|--------|---------|------|
+| [owner/repo](https://github.com/owner/repo) | TypeScript | +XXX | ★★★/★★/★ | AI/Dev/OSS等 | 発信に活用できるポイント |
+
+### 全エントリー
+
+1. [owner/repo](https://github.com/owner/repo) (+XXX stars today, TypeScript) - 概要
+2. ...
+
 <!-- Redditは403エラーのため出力対象から一時除外。
 ## Reddit（13サブレッド）
 
@@ -205,10 +240,13 @@ OSS/個人開発系（4サブレッド）:
 ## 注意事項
 
 - はてブは公式RSS、追加セキュリティソースはWebFetchツール、Hacker Newsは公式JSON APIで取得
+- GitHub Trendingは **ax CLI** を使用（`ax https://github.com/trending ... --json`）
 - **すべての記事にURLリンクを必ず含める（リンクなしは不可）**
 - **はてブは元記事のURLを必ず取得**（はてブページURLではなく）
 - **Hacker NewsはHNコメントページURL（`item?id=`形式）を使用**（元記事URLではなく）
 - **Hacker Newsのタイトルは日本語に翻訳**
+- GitHub TrendingのURLは `https://github.com` + 相対パス で完全URLにすること
+- GitHub Trendingの `stars` は「今日獲得スター数」であり、累計スター数ではない
 <!-- Redditは403エラーのため一時停止。
 - **RedditはRedditコメントページの完全URL（`https://www.reddit.com/r/subreddit/comments/...`形式）を使用**
 - **Redditのタイトルは日本語に翻訳**
