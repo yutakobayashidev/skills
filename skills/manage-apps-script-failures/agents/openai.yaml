@@ -1,0 +1,4 @@
+interface:
+  display_name: "Apps Script Failure Manager"
+  short_description: "Gmail通知からApps Script障害を安全に解決"
+  default_prompt: "Use $manage-apps-script-failures to inspect recent Apps Script failure emails and safely fix or stop one failing trigger with my approval."
