@@ -17,6 +17,7 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 | [dce](skills/dce)                                                       | Detect and eliminate dead code in TypeScript projects            |
 | [functional-cohesion-components](skills/functional-cohesion-components) | Guide frontend component design using functional cohesion        |
 | [gha-lint](skills/gha-lint)                                             | Lint GitHub Actions and maintain verified action lockfiles |
+| [gha-lint-repos](skills/gha-lint-repos)                                 | Roll out gha-lint across an owner’s repositories with per-repo PRs |
 | [good-first-issue-creator](skills/good-first-issue-creator)             | Draft newcomer-friendly GitHub issues                            |
 | [grok-search](skills/grok-search)                                       | Search real-time reactions and discussions on X with Grok        |
 | [manage-apps-script-failures](skills/manage-apps-script-failures)       | Triage and safely resolve Google Apps Script failures            |

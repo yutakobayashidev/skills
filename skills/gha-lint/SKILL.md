@@ -18,6 +18,9 @@ Static analysis and security checking tools for GitHub Actions workflows. Use ja
 
 ---
 
+For owner-wide cloning and PR orchestration, use the companion `gha-lint-repos`
+skill. This skill handles one repository at a time.
+
 ## Action dependency locking (default)
 
 When adding or editing workflows on GitHub.com or GitHub Enterprise Cloud with
@@ -441,7 +444,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh extension install github/gh-actions-lock --pin v0.2.0
+          gh extension install github/gh-actions-lock --pin v0.4.0
           gh actions-lock --verify
 
       - uses: aquaproj/aqua-installer@11dd79b4e498d471a9385aa9fb7f62bb5f52a73c # v4.0.4
