@@ -16,7 +16,7 @@ graders:
 - type: text
   config:
     regex_match:
-    - (?i)(action|workflow|pin|SHA|actionlint|pinact|ghalint|zizmor)
+    - (?i)(action|workflow|pin|SHA|jactionlint|pinact|ghalint|zizmor)
 - type: code
   config:
     assertions:

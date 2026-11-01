@@ -1,76 +1,96 @@
 ---
 name: gha-lint
-description: Lint and secure GitHub Actions workflows using pinact, actionlint, ghalint, and zizmor. Use when the user adds, updates, or reviews GitHub Actions workflows and wants to check correctness, security, or pin action versions.
+description: Lint and secure GitHub Actions workflows using pinact, jactionlint, ghalint, and zizmor. Use when the user adds, updates, or reviews GitHub Actions workflows and wants to check correctness, security, or pin action versions.
 user-invocable: true
 ---
 
 # GitHub Actions Lint & Security
 
-Static analysis and security checking tools for GitHub Actions workflows. All tools are available via nixpkgs for local use. Each tool covers different checks with no overlap, so using all of them together is recommended.
+Static analysis and security checking tools for GitHub Actions workflows. Use jactionlint for workflow correctness, pinact for SHA pinning, and ghalint / zizmor for security checks. Some checks overlap. jactionlint is available in nixos-unstable; the explicit flake reference below also works when the local `nixpkgs` registry points to an older revision without it.
 
-| Tool           | Purpose                         | nixpkgs              |
+| Tool           | Purpose                         | Nix package          |
 | -------------- | ------------------------------- | -------------------- |
-| **actionlint** | Workflow syntax checking        | `nixpkgs#actionlint` |
+| **jactionlint** | Workflow syntax and type checking | `github:NixOS/nixpkgs/nixos-unstable#jactionlint` |
 | **pinact**     | SHA-pin action references       | `nixpkgs#pinact`     |
 | **ghalint**    | Security best practices         | `nixpkgs#ghalint`    |
 | **zizmor**     | Security vulnerability analysis | `nixpkgs#zizmor`     |
 
 ---
 
-## actionlint
+## jactionlint
 
-Syntax and type checker for workflow files. Integrates with shellcheck / pyflakes to also inspect inline scripts.
+[jactionlint](https://github.com/jdx/jactionlint) is a fork of actionlint. Use its
+`correctness` profile for the syntax/type-checking role in this toolchain. The
+`default` profile adds security and policy checks; `pedantic` adds stricter checks.
+When a repository already selects a profile, respect it rather than overriding it.
 
 ### Basic Commands
 
 ```bash
-# Auto-detect and check all files under .github/workflows/
-nix run nixpkgs#actionlint
+# Auto-detect workflows, composite actions and Dependabot configuration
+nix run github:NixOS/nixpkgs/nixos-unstable#jactionlint -- --profile correctness
 
 # Check a specific file
-nix run nixpkgs#actionlint -- .github/workflows/nix-build.yaml
+nix run github:NixOS/nixpkgs/nixos-unstable#jactionlint -- --profile correctness .github/workflows/nix-build.yaml
 
 # JSON output
-nix run nixpkgs#actionlint -- -format '{{json .}}'
+nix run github:NixOS/nixpkgs/nixos-unstable#jactionlint -- --profile correctness --format json
 ```
+
+The Nix package does not bundle shellcheck / pyflakes. Include them when checking
+inline scripts:
+
+```bash
+nix shell github:NixOS/nixpkgs/nixos-unstable#jactionlint nixpkgs#shellcheck nixpkgs#python3Packages.pyflakes -c jactionlint --profile correctness
+```
+
+For reproducible CI or a devShell, pin nixpkgs in the project's flake lock rather
+than resolving the moving branch on each run. No NUR package is needed.
 
 ### What It Detects
 
 - Workflow syntax errors (missing required keys, duplicate keys, invalid values)
 - Type checking of `${{ }}` expressions (undefined context references, etc.)
-- Shell script issues via shellcheck
-- Python script issues via pyflakes
-- Matrix inconsistencies, invalid glob patterns
-- Deprecated commands (`set-output`, etc.)
+- Shell script issues via shellcheck and Python issues via pyflakes
+- Matrix inconsistencies, invalid glob patterns and runner labels
+- Deprecated commands and invalid local/composite actions
 
 ### CI Usage
 
-Use `suzuki-shunsuke/actionlint-action` (installs actionlint + reviewdog + shellcheck via aqua):
+Use the official action, pinned to a release commit:
 
 ```yaml
-- uses: suzuki-shunsuke/actionlint-action@29e0b7cda52e51a495d15f22759745ef6e19583a # v0.1.1
+- uses: jdx/jactionlint@a65ab044e916760429068fe5794b8306abdfcbb9 # v2.3.0
+  with:
+    profile: correctness
 ```
 
-Or use the official download script:
+The action defaults to the binary version it was released with. If the repository
+configures its own profile, omit the `profile` input. Inline script checks require
+shellcheck / pyflakes on the runner's PATH; the action does not install them.
+
+### Configuration and Migration
+
+Use `.github/jactionlint.yaml` for new configuration:
 
 ```yaml
-- name: Install actionlint
-  run: bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
-- name: actionlint
-  run: ./actionlint
-```
-
-### Custom Runner Labels
-
-If workflows use self-hosted or custom runner labels, add `.github/actionlint.yaml` so actionlint can validate them correctly.
-
-```yaml
+profile: correctness
 self-hosted-runner:
   labels:
     - blacksmith-4vcpu-ubuntu-2404
 ```
 
-Without this file, actionlint often reports unknown runner labels even when the workflow is correct.
+Existing `.github/actionlint.yaml` files are accepted. Preserve custom labels and
+other settings when renaming one; without a profile, jactionlint applies its
+broader `default` checks. The `correctness` profile also adds bug checks, so it is
+not an exact copy of actionlint.
+
+Use v2 long options (`--format json`, `--config-file`, `--ignore`) instead of
+legacy single-dash options. Review output parsers and ignore patterns when
+migrating: rule IDs and messages can differ. Findings at warning/info severity do
+not fail the command unless `--strict-exit` is set.
+
+See the [upstream migration guide](https://github.com/jdx/jactionlint/blob/v2.3.0/docs/actionlint.md).
 
 ---
 
@@ -303,10 +323,9 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: actionlint
-        run: |
-          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
-          ./actionlint
+      - uses: jdx/jactionlint@a65ab044e916760429068fe5794b8306abdfcbb9 # v2.3.0
+        with:
+          profile: correctness
 
       - uses: suzuki-shunsuke/pinact-action@1081f5ad49ac904b7d977784f338145150a32112 # v1.4.0
         with:
@@ -333,7 +352,7 @@ jobs:
 2. Run all tools locally:
 
 ```bash
-nix run nixpkgs#actionlint
+nix run github:NixOS/nixpkgs/nixos-unstable#jactionlint -- --profile correctness
 nix run nixpkgs#pinact -- run
 nix run nixpkgs#ghalint -- run
 nix run nixpkgs#zizmor -- .
@@ -350,5 +369,5 @@ git diff
 ## Notes
 
 - Setting `GITHUB_TOKEN` / `GH_TOKEN` avoids API rate limits (pinact, zizmor)
-- actionlint auto-integrates with shellcheck and pyflakes if they're in PATH (nixpkgs version bundles them)
+- jactionlint auto-integrates with shellcheck and pyflakes on PATH. The Nix package does not bundle these companions; use the `nix shell` command above for inline script checks.
 - ghalint's checks partially overlap with pinact (SHA pinning), but ghalint also covers other best practices, so using both is worthwhile

@@ -5,7 +5,7 @@ tags:
 - basic
 - happy-path
 inputs:
-  prompt: Check this workflow file for security issues with actionlint and pinact.
+  prompt: Check this workflow file for security issues with jactionlint and pinact.
   files:
   - path: ci.yml
 expected:
