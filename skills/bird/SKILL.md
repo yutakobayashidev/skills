@@ -1,5 +1,5 @@
 ---
-name: Bird
+name: bird
 description: X/Twitter command-line tool for reading, searching, posting, and interacting. Use when the user wants to read, search, post, or interact with X/Twitter through the bird CLI.
 homepage: https://bird.fast
 metadata:
