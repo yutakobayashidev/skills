@@ -33,6 +33,16 @@ Workflow lockfiles became GA on October 28, 2026, including Team and Free plans.
 See the [GA announcement](https://github.blog/changelog/2026-10-28-github-actions-workflow-lockfiles-are-generally-available/)
 and [official setup guide](https://docs.github.com/en/actions/how-tos/secure-your-work/lock-workflow-dependencies).
 
+### Runtime enforcement and local verification
+
+GitHub automatically validates onboarded workflows at execution time: dependency
+coverage, locked commit provenance, and source repository identity. Rely on that
+runtime enforcement; adding `actions.lock` does not require a verification CI job.
+Run `gh actions-lock --verify` locally before committing. Add a verification CI
+job only when the user explicitly requests pre-merge lockfile checks; it can catch
+problems in scheduled or manual workflows before they run, but is not required to
+enable locking. Keep existing verification CI unless its removal is in scope.
+
 ### Generate, review, verify
 
 Use authenticated GitHub CLI from the repository root. If the extension is absent:
@@ -48,20 +58,20 @@ gh actions-lock .github/workflows/ci.yml
 # For repository-wide adoption, scan all workflows (also prunes deleted entries)
 gh actions-lock
 
-# Read-only verification against GitHub; use this in CI
+# Read-only local verification against GitHub before committing
 gh actions-lock --verify
 ```
 
 Choose the scoped or full-directory generation command to match the task. A
 repository-wide verify also checks workflows not yet onboarded: complete adoption
-before making that full check required, or scope verification during rollout.
+before running the full check, or scope local verification during rollout.
 
 - Do not hand-edit `actions.lock`. Generation can also rewrite workflow references
   to more specific version tags; review and commit both files together.
 - Plain generation preserves existing pins. Use `--relock` only for an intentional
   dependency refresh, review changed commits and their release notes, then verify.
 - `--verify-local` is an optional offline coverage check, not a replacement for
-  `--verify` in CI. Check `gh actions-lock --help` for the installed version.
+  `--verify` before committing. Check `gh actions-lock --help` for the installed version.
 - Failures such as unreachable pins or replaced repository identities require
   investigation. Do not automatically use `--accept-moved` to silence them.
 - Do not infer trust from a successful lock: review dependency and lockfile diffs.
@@ -109,7 +119,7 @@ Keep other lint/security checks. ghalint v1.6.0 adds lockfile support; zizmor v1
 adds experimental support. Check the installed versions, including Nix packages,
 before relying on that support. jactionlint 2.3.0 has lock-aware pin checks in its
 `default` profile, but the `correctness` profile below does not run those checks;
-keep the dedicated `gh actions-lock --verify` check either way.
+run `gh actions-lock --verify` locally after generating the lockfile.
 
 If a linter flags a tag already covered by the
 lockfile, check its installed version and lockfile support before changing policy.
@@ -402,14 +412,12 @@ Without Advanced Security:
 
 ---
 
-## CI Integration: Lock verification and linting
+## CI Integration: Linting
 
-For a repository with all workflows onboarded, verify locks alongside the linters.
-The example keeps existing SHA pins; tags are also valid for locked actions. After
-adding this workflow, generate the lockfile again so this workflow is covered too.
-Pin the extension version deliberately and update it with reviewed upgrades.
-For private dependencies in other repositories, verification needs a token that
-can read them; the default repository token may be insufficient.
+When CI linting is requested, the example below runs correctness and security
+checks. It keeps existing SHA pins; tags are also valid for locked actions.
+After adding or editing a workflow, regenerate and verify the lockfile locally.
+Lockfile adoption alone does not call for adding this CI workflow.
 
 ```yaml
 name: "CI: GitHub Actions lint"
@@ -439,13 +447,6 @@ jobs:
       - uses: jdx/jactionlint@a65ab044e916760429068fe5794b8306abdfcbb9 # v2.3.0
         with:
           profile: correctness
-
-      - name: Verify action lockfile
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh extension install github/gh-actions-lock --pin v0.4.0
-          gh actions-lock --verify
 
       - uses: aquaproj/aqua-installer@11dd79b4e498d471a9385aa9fb7f62bb5f52a73c # v4.0.4
         with:
@@ -482,8 +483,8 @@ nix run nixpkgs#zizmor -- .
 git diff
 ```
 
-5. Open a PR and verify CI passes. Use read-only lock verification on PRs; do not
-   regenerate or auto-accept moved pins inside the required verification check.
+5. Open a PR and inspect the existing CI results. Apply the runtime-enforcement
+   policy above when deciding whether a verification CI job belongs in the change.
 
 ## Notes
 
