@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nix Cache Optimize"
+  short_description: "Reduce source builds using verified binary cache coverage"
+  default_prompt: "Use $nix-cache-optimize to audit expensive Nix builds and compare cached nixpkgs replacements and input revisions."

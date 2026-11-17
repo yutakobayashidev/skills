@@ -23,6 +23,7 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 | [manage-apps-script-failures](skills/manage-apps-script-failures)       | Triage and safely resolve Google Apps Script failures            |
 | [trend-daily](skills/trend-daily)                                       | Collect daily trends from Radar OPML feeds, Hatena, HN, Lobsters, and GitHub |
 | [nextjs-onboarding](skills/nextjs-onboarding)                           | Audit baseline repo hygiene when joining a Next.js project       |
+| [nix-cache-optimize](skills/nix-cache-optimize)                       | Reduce source builds with verified nixpkgs and binary-cache coverage |
 | [oura-daily-watch](skills/oura-daily-watch)                             | Build and run a daily Oura + Discord behavior monitor            |
 | [repo-creator](skills/repo-creator)                                     | Create new GitHub repositories through OpenTofu                  |
 | [social-digest](skills/social-digest)                                   | Fetch and summarize Discord + Mastodon posts                     |
