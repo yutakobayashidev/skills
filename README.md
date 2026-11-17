@@ -9,6 +9,7 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 | [action-plan-daily](skills/action-plan-daily)                           | Turn Gmail and Slack into a focused daily action plan            |
 | [adr](skills/adr)                                                       | Draft or refine architecture decision records                    |
 | [app-download](skills/app-download)                                   | Download Android and Apple app packages with apkeep and ipatool  |
+| [atuin-motive-salvage](skills/atuin-motive-salvage) | Recover user intent from Atuin Threads with verbatim citations |
 | [audit-email-noise](skills/audit-email-noise)                           | Identify recurring low-value email and propose safe unsubscribes |
 | [babashka-nrepl](skills/babashka-nrepl)                                 | Write Babashka scripts with nREPL-driven development             |
 | [bird](skills/bird)                                                     | Read, search, post, and interact with X/Twitter via CLI          |
