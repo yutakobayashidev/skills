@@ -7,7 +7,6 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 | Skill                                                                   | Description                                                      |
 | ----------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | [action-plan-daily](skills/action-plan-daily)                           | Turn Gmail and Slack into a focused daily action plan            |
-| [adr](skills/adr)                                                       | Draft or refine architecture decision records                    |
 | [app-download](skills/app-download)                                   | Download Android and Apple app packages with apkeep and ipatool  |
 | [atuin-motive-salvage](skills/atuin-motive-salvage) | Recover user intent from Atuin Threads with verbatim citations |
 | [atuin-retro](skills/atuin-retro) | Feed all synchronized Atuin Threads into retro across machines and projects |
