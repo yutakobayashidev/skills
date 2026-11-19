@@ -126,3 +126,10 @@ Print the final result:
 - Local path
 - Toolchain and license used
 - Worktree install hook added, or why none was needed
+
+## 10. Hand Off to Domain Modeling
+
+After the summary, ask the user to open the new repository and invoke
+`$domain-modeling` to start defining the project's requirements and identifying
+decisions that warrant an ADR. Leave the modeling session to the user's next
+request.
