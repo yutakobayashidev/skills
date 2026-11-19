@@ -1,6 +1,6 @@
 ---
 name: init-project
-description: Create a new GitHub repository through the homelab OpenTofu workflow, clone it with ghq, initialize it from the-nix-way/dev-templates, configure dependency installation for new worktrees, and make the initial commits.
+description: Create a new GitHub repository through the tofu-configuration CI workflow, clone it with ghq, initialize it from the-nix-way/dev-templates, configure dependency installation for new worktrees, and make the initial commits.
 ---
 
 Create a new repository with full scaffolding. Follow these steps exactly:
@@ -21,7 +21,9 @@ New repository setup:
 
 ## 2. Add Repository to OpenTofu
 
-Add `github_repository` resource to `~/ghq/github.com/yutakobayashidev/homelab/tofu/github/repositories.tf`:
+Locate `yutakobayashidev/tofu-configuration` with `ghq list -p`, or clone it
+with `ghq get yutakobayashidev/tofu-configuration` if needed. Add the
+`github_repository` resource to `infra/services/github/repositories.tf`:
 
 ```hcl
 resource "github_repository" "<project_name>" {
@@ -51,12 +53,19 @@ Notes:
 - Map the toolchain to the closest GitHub gitignore template name, e.g. go -> Go, rust -> Rust, python -> Python, node -> Node. If no match, omit `gitignore_template`.
 - If description is empty, omit `description`.
 
-## 3. Apply OpenTofu
+## 3. Submit the OpenTofu Change and Wait for CI
+
+Commit the new repository resource and submit it through
+`tofu-configuration`'s normal workflow so it lands on `main` and CI runs
+the apply. Check the apply result when available and confirm that the new
+repository is accessible before cloning:
 
 ```bash
-cd ~/ghq/github.com/yutakobayashidev/homelab/tofu/github
-tofu apply
+gh repo view yutakobayashidev/<project_name> --json url,defaultBranchRef
 ```
+
+If CI fails or the repository is still pending, report that status and
+resume cloning after provisioning succeeds.
 
 ## 4. Clone via ghq
 
@@ -107,18 +116,7 @@ git commit -m "feat: init <project_name> with <toolchain> flake"
 git push -u origin main
 ```
 
-## 8. Commit OpenTofu Changes
-
-Back in the homelab repo, commit the new repository resource:
-
-```bash
-cd ~/ghq/github.com/yutakobayashidev/homelab
-git add tofu/github/repositories.tf
-git commit -m "feat: add <project_name> repository to OpenTofu"
-git push
-```
-
-## 9. Summary
+## 8. Summary
 
 Print the final result:
 
@@ -127,7 +125,7 @@ Print the final result:
 - Toolchain and license used
 - Worktree install hook added, or why none was needed
 
-## 10. Hand Off to Domain Modeling
+## 9. Hand Off to Domain Modeling
 
 After the summary, ask the user to open the new repository and invoke
 `$domain-modeling` to start defining the project's requirements and identifying
