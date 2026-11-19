@@ -21,12 +21,12 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 | [gha-lint-repos](skills/gha-lint-repos)                                 | Roll out gha-lint across an owner’s repositories with per-repo PRs |
 | [good-first-issue-creator](skills/good-first-issue-creator)             | Draft newcomer-friendly GitHub issues                            |
 | [grok-search](skills/grok-search)                                       | Search real-time reactions and discussions on X with Grok        |
+| [init-project](skills/init-project)                                     | Create a GitHub repository and initialize its dev environment    |
 | [manage-apps-script-failures](skills/manage-apps-script-failures)       | Triage and safely resolve Google Apps Script failures            |
 | [trend-daily](skills/trend-daily)                                       | Collect daily trends from Radar OPML feeds, Hatena, HN, Lobsters, and GitHub |
 | [nextjs-onboarding](skills/nextjs-onboarding)                           | Audit baseline repo hygiene when joining a Next.js project       |
 | [nix-cache-optimize](skills/nix-cache-optimize)                       | Reduce source builds with verified nixpkgs and binary-cache coverage |
 | [oura-daily-watch](skills/oura-daily-watch)                             | Build and run a daily Oura + Discord behavior monitor            |
-| [repo-creator](skills/repo-creator)                                     | Create new GitHub repositories through OpenTofu                  |
 | [social-digest](skills/social-digest)                                   | Fetch and summarize Discord + Mastodon posts                     |
 | [speakerdeck](skills/speakerdeck)                                       | Download slide images from a SpeakerDeck presentation            |
 | [terraform-toolchain](skills/terraform-toolchain)                       | Set up Terraform/OpenTofu Nix devShells and IaC scanners         |

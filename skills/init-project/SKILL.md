@@ -1,6 +1,6 @@
 ---
-name: repo-creator
-description: Create a new GitHub repository through the homelab OpenTofu workflow, clone it with ghq, initialize it from dev-templates, and make the initial commits.
+name: init-project
+description: Create a new GitHub repository through the homelab OpenTofu workflow, clone it with ghq, initialize it from the-nix-way/dev-templates, configure dependency installation for new worktrees, and make the initial commits.
 ---
 
 Create a new repository with full scaffolding. Follow these steps exactly:
@@ -13,7 +13,7 @@ Gather all info in one prompt:
 New repository setup:
 
 1. Project name? (e.g. my-app)
-2. Toolchain? Pick from: bun, c, c-cpp, clojure, cpp, cue, dhall, elixir, elm, gleam, go, hashi, haskell, java, jupyter, kotlin, latex, lean4, nickel, nim, nix, node, ocaml, odin, opa, php, platformio, protobuf, pulumi, purescript, python, r, ruby, rust, scala, shell, swi-prolog, swift, typst, vlang, zig
+2. Toolchain? Choose a template from the-nix-way/dev-templates (e.g. node, bun, python, go, rust, or hashi).
 3. License? (mit, apache-2.0, gpl-3.0, unlicense, etc. Default: mit)
 4. Visibility? (public / private. Default: public)
 5. Description? (one-liner, optional)
@@ -77,7 +77,27 @@ git pull origin main
 nix flake init -t github:the-nix-way/dev-templates#<toolchain>
 ```
 
-## 6. Initial Commit
+## 6. Configure the Worktree Dependency Hook
+
+From the new repository root, choose the install command using the selected
+template, its setup notes, and any project manifest or lockfile. Honor a package
+manager already declared by the project. For a Node project using pnpm, append:
+
+```bash
+git config --local --add wt.hook 'pnpm install'
+```
+
+For a Bun project using Bun, append `bun install` the same way. If no package
+manager is declared, use pnpm for `node` and Bun for `bun` when the project has a
+`package.json`. For other templates, add the documented install command if the
+project has dependencies to install. Skip the hook for shell-only scaffolding
+without a dependency manifest.
+
+The global `wt.hook` already handles `direnv allow`. Add only the install command
+to the repository's local Git config. Check `git config --local --get-all wt.hook`
+first and append the command only if it is absent.
+
+## 7. Initial Commit
 
 Stage all files and create an initial commit:
 
@@ -87,7 +107,7 @@ git commit -m "feat: init <project_name> with <toolchain> flake"
 git push -u origin main
 ```
 
-## 7. Commit OpenTofu Changes
+## 8. Commit OpenTofu Changes
 
 Back in the homelab repo, commit the new repository resource:
 
@@ -98,10 +118,11 @@ git commit -m "feat: add <project_name> repository to OpenTofu"
 git push
 ```
 
-## 8. Summary
+## 9. Summary
 
 Print the final result:
 
 - Repository URL
 - Local path
 - Toolchain and license used
+- Worktree install hook added, or why none was needed
