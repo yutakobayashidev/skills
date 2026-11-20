@@ -1,6 +1,6 @@
 ---
 name: init-project
-description: Create a new GitHub repository through the tofu-configuration CI workflow, clone it with ghq, initialize it from the-nix-way/dev-templates, configure dependency installation for new worktrees, add a CI gate, and make the initial commits.
+description: Create a new GitHub repository through its own OpenTofu root in tofu-configuration, clone it with ghq, initialize it from the-nix-way/dev-templates, configure dependency installation for new worktrees, add a CI gate, and make the initial commits.
 ---
 
 Create a new repository with full scaffolding. Follow these steps exactly:
@@ -19,53 +19,68 @@ New repository setup:
 5. Description? (one-liner, optional)
 ```
 
-## 2. Add Repository to OpenTofu
+## 2. Write the Repository Root
 
 Locate `yutakobayashidev/tofu-configuration` with `ghq list -p`, or clone it
-with `ghq get yutakobayashidev/tofu-configuration` if needed. Add the
-`github_repository` resource to `infra/services/github/repositories.tf`:
+with `ghq get yutakobayashidev/tofu-configuration` if needed. Each repository
+has its own OpenTofu root. From the tofu-configuration checkout, write one:
+
+```bash
+nix develop -c scripts/new-github-repository <project_name> "<description>" <visibility>
+```
+
+The script writes `infra/services/github/repositories/<project_name>/`. Its
+`module_gh_repo_kit.tf` calls the shared module, whose defaults are the
+recommended settings (squash merge only, branch deletion on merge, Dependabot
+alerts):
 
 ```hcl
-resource "github_repository" "<project_name>" {
+module "repository" {
+  source = "git::https://github.com/zunoser/tfmodule-gh-repo-kit.git?ref=<version>"
+
   name        = "<project_name>"
-  description = "<description>"  # omit if empty
+  description = "<description>"
   visibility  = "<visibility>"
 
-  has_issues    = true
-  has_projects  = true
-  has_wiki      = true
-  has_downloads = true
-
-  allow_merge_commit = true
-  allow_squash_merge = true
-  allow_rebase_merge = true
-
-  delete_branch_on_merge = true
-
-  license_template    = "<license>"            # e.g. "mit"
-  gitignore_template  = "<Gitignore_template>" # e.g. "Go", "Rust", "Python", "Node"; omit if no match
+  # The standard ruleset requires an approving review, which a sole maintainer
+  # cannot give. Enable a ruleset after reviewing the policy for this repository.
+  default_branch_ruleset = null
 }
 ```
 
-Notes:
+When the user asks for a setting that differs from the defaults, add it to a
+`general` block, e.g. `general = { has_wiki = true }`; the module README lists
+the fields. Requested settings the module does not expose, such as GitHub
+Pages, become manual follow-ups in the summary.
 
-- Resource name: use the project name with hyphens converted to underscores.
-- Map the toolchain to the closest GitHub gitignore template name, e.g. go -> Go, rust -> Rust, python -> Python, node -> Node. If no match, omit `gitignore_template`.
-- If description is empty, omit `description`.
+## 3. Plan and Apply the Root
 
-## 3. Submit the OpenTofu Change and Wait for CI
+tofu-configuration has no apply pipeline, so apply the root locally. Export the
+credentials listed in its `docs/github-management.md`, then plan:
 
-Commit the new repository resource and submit it through
-`tofu-configuration`'s normal workflow so it lands on `main` and CI runs
-the apply. Check the apply result when available and confirm that the new
-repository is accessible before cloning:
+```bash
+root=infra/services/github/repositories/<project_name>
+tofu -chdir="$root" init
+tofu -chdir="$root" plan -out=tfplan
+```
+
+The plan creates exactly three resources: the repository, its default branch,
+and its vulnerability alerts. Show it to the user and apply after they approve:
+
+```bash
+tofu -chdir="$root" apply tfplan
+rm "$root/tfplan"
+```
+
+Commit the root and land it on `main` through tofu-configuration's normal
+workflow. The step is done when the repository answers:
 
 ```bash
 gh repo view yutakobayashidev/<project_name> --json url,defaultBranchRef
 ```
 
-If CI fails or the repository is still pending, report that status and
-resume cloning after provisioning succeeds.
+If credentials are missing or the apply fails, report that status and resume
+after the user resolves it.
 
 ## 4. Clone via ghq
 
@@ -74,11 +89,19 @@ ghq get yutakobayashidev/<project_name>
 cd "$(ghq root)/github.com/yutakobayashidev/<project_name>"
 ```
 
-Pull the generated LICENSE and `.gitignore`:
+GitHub creates the repository with only a README, so add the license and
+`.gitignore` from GitHub's templates:
 
 ```bash
-git pull origin main
+gh api licenses/<license> --jq .body > LICENSE
+gh api gitignore/templates/<Gitignore_template> --jq .source > .gitignore
 ```
+
+- In `LICENSE`, replace `[year]` and `[fullname]`, when present, with the
+  current year and `gh api user --jq '.name // .login'`.
+- Map the toolchain to the closest gitignore template name, e.g. go -> Go,
+  rust -> Rust, python -> Python, node -> Node. When none matches, skip
+  `.gitignore`.
 
 ## 5. Init Nix Flake from dev-templates
 
@@ -171,7 +194,8 @@ Print the final result:
 - Toolchain and license used
 - Worktree install hook added, or why none was needed
 - CI gate workflow path, and that `ci-gate` is not yet a required check on
-  `main` (tofu-configuration does not manage repository rules yet)
+  `main` (the root sets `default_branch_ruleset = null`)
+- Manual follow-ups for requested settings the module does not expose
 
 ## 10. Hand Off to Domain Modeling
 
