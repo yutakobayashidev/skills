@@ -4,4 +4,5 @@
 3. Confirm the repository exists and clone with ghq
 4. Initialize from dev-templates
 5. Append the template-specific dependency install command to the repository's local wt.hook
-6. Make initial commit
+6. Add the CI gate workflow (.github/workflows/ci.yml ending in a ci-gate job) and lint and lock it with gha-lint
+7. Make initial commit

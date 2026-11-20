@@ -1,6 +1,6 @@
 ---
 name: init-project
-description: Create a new GitHub repository through the tofu-configuration CI workflow, clone it with ghq, initialize it from the-nix-way/dev-templates, configure dependency installation for new worktrees, and make the initial commits.
+description: Create a new GitHub repository through the tofu-configuration CI workflow, clone it with ghq, initialize it from the-nix-way/dev-templates, configure dependency installation for new worktrees, add a CI gate, and make the initial commits.
 ---
 
 Create a new repository with full scaffolding. Follow these steps exactly:
@@ -106,7 +106,53 @@ The global `wt.hook` already handles `direnv allow`. Add only the install comman
 to the repository's local Git config. Check `git config --local --get-all wt.hook`
 first and append the command only if it is absent.
 
-## 7. Initial Commit
+## 7. Add the CI Gate
+
+Create `.github/workflows/ci.yml` in the new repository. It runs on every pull
+request and push to `main` and ends in one aggregate job, `ci-gate`: the single
+check that branch rules and agents wait on. New jobs join the gate through its
+`needs` list, so the check name stays stable.
+
+```yaml
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  flake-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: cachix/install-nix-action@8aa03977d8d733052d78f4e008a241fd1dbf36b3 # v31.10.6
+      - run: nix flake check
+
+  # Add every new job to `needs`.
+  ci-gate:
+    if: always()
+    needs: [flake-check]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
+```
+
+Then run `$gha-lint` on `ci.yml`: it lints the workflow and onboards its actions
+to `.github/workflows/actions.lock`. The step is done when `nix flake check`
+passes locally and every `$gha-lint` check passes.
+
+## 8. Initial Commit
 
 Stage all files and create an initial commit:
 
@@ -116,7 +162,7 @@ git commit -m "feat: init <project_name> with <toolchain> flake"
 git push -u origin main
 ```
 
-## 8. Summary
+## 9. Summary
 
 Print the final result:
 
@@ -124,8 +170,10 @@ Print the final result:
 - Local path
 - Toolchain and license used
 - Worktree install hook added, or why none was needed
+- CI gate workflow path, and that `ci-gate` is not yet a required check on
+  `main` (tofu-configuration does not manage repository rules yet)
 
-## 9. Hand Off to Domain Modeling
+## 10. Hand Off to Domain Modeling
 
 After the summary, ask the user to open the new repository and invoke
 `$domain-modeling` to start defining the project's requirements and identifying
