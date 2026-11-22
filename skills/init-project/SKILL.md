@@ -31,9 +31,11 @@ gh workflow run github-new-repository.yml --repo yutakobayashidev/tofu-configura
 ```
 
 The root calls the shared repo kit module. Its defaults are the recommended
-settings (squash merge only, branch deletion on merge, Dependabot alerts), and
-its ruleset makes `main` accept only pull requests that pass `ci-gate`, with no
-required approval. The pull request's branch is `new-repository/<project_name>`;
+settings (squash merge only, branch deletion on merge, Dependabot alerts). For a
+public repository, its ruleset makes `main` accept only pull requests that pass
+`ci-gate`, with no required approval. GitHub Free has no rulesets for private
+repositories, so a private root sets `default_branch_ruleset = null` and
+`ci-gate` stays advisory. The pull request's branch is `new-repository/<project_name>`;
 find it with:
 
 ```bash
@@ -74,6 +76,13 @@ the apply succeeds and the repository answers:
 ```bash
 gh repo view yutakobayashidev/<project_name> --json url,defaultBranchRef
 ```
+
+The apply App created the repository, so only its installation includes it.
+Ask the user to add the repository to the plan App's installation: open
+<https://github.com/settings/installations>, choose **Configure** on
+`yuta-tofu-plan`, and add it under **Repository access**. Until then,
+github-plan fails for this root with a 422 when it requests a token scoped to
+the repository.
 
 If a run fails, report the failing step from its log and resume after the user
 resolves it.
@@ -173,8 +182,9 @@ passes locally and every `$gha-lint` check passes.
 
 ## 8. Land the First Commit Through a Pull Request
 
-The ruleset rejects direct pushes to `main`, and `ci-gate` must pass before a
-merge. Open the scaffolding as a pull request:
+For a public repository, the ruleset rejects direct pushes to `main`, and
+`ci-gate` must pass before a merge. Use the same pull request flow for a private
+repository so `ci-gate` still runs. Open the scaffolding as a pull request:
 
 ```bash
 git switch -c init
@@ -182,7 +192,7 @@ git add -A
 git commit -m "feat: init <project_name> with <toolchain> flake"
 git push -u origin init
 gh pr create --fill --base main
-gh pr checks --watch --required
+gh pr checks --watch
 ```
 
 Merge once `ci-gate` passes, then sync `main`:
@@ -203,8 +213,10 @@ Print the final result:
 - Local path
 - Toolchain and license used
 - Worktree install hook added, or why none was needed
-- tofu-configuration pull request URL and the CI gate workflow path; `main`
-  requires pull requests that pass `ci-gate`
+- tofu-configuration pull request URL and the CI gate workflow path. For a
+  public repository, `main` requires pull requests that pass `ci-gate`; for a
+  private one, `ci-gate` is advisory because GitHub Free has no rulesets there
+- Whether the repository was added to the `yuta-tofu-plan` installation
 - Manual follow-ups for requested settings the module does not expose
 
 ## 10. Hand Off to Domain Modeling
