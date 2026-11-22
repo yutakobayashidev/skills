@@ -1,6 +1,6 @@
 ---
 name: init-project
-description: Create a new GitHub repository through its own OpenTofu root in tofu-configuration, clone it with ghq, initialize it from the-nix-way/dev-templates, configure dependency installation for new worktrees, add a CI gate, and make the initial commits.
+description: Create a new GitHub repository through a tofu-configuration pull request that CI plans and applies, clone it with ghq, initialize it from the-nix-way/dev-templates, configure dependency installation for new worktrees, add the required ci-gate check, and land the first commit through a pull request.
 ---
 
 Create a new repository with full scaffolding. Follow these steps exactly:
@@ -19,68 +19,73 @@ New repository setup:
 5. Description? (one-liner, optional)
 ```
 
-## 2. Write the Repository Root
+## 2. Open the Repository Pull Request
 
-Locate `yutakobayashidev/tofu-configuration` with `ghq list -p`, or clone it
-with `ghq get yutakobayashidev/tofu-configuration` if needed. Each repository
-has its own OpenTofu root. From the tofu-configuration checkout, write one:
-
-```bash
-nix develop -c scripts/new-github-repository <project_name> "<description>" <visibility>
-```
-
-The script writes `infra/services/github/repositories/<project_name>/`. Its
-`module_gh_repo_kit.tf` calls the shared module, whose defaults are the
-recommended settings (squash merge only, branch deletion on merge, Dependabot
-alerts):
-
-```hcl
-module "repository" {
-  source = "git::https://github.com/zunoser/tfmodule-gh-repo-kit.git?ref=<version>"
-
-  name        = "<project_name>"
-  description = "<description>"
-  visibility  = "<visibility>"
-
-  # The standard ruleset requires an approving review, which a sole maintainer
-  # cannot give. Enable a ruleset after reviewing the policy for this repository.
-  default_branch_ruleset = null
-}
-```
-
-When the user asks for a setting that differs from the defaults, add it to a
-`general` block, e.g. `general = { has_wiki = true }`; the module README lists
-the fields. Requested settings the module does not expose, such as GitHub
-Pages, become manual follow-ups in the summary.
-
-## 3. Plan and Apply the Root
-
-tofu-configuration has no apply pipeline, so apply the root locally. Export the
-credentials listed in its `docs/github-management.md`, then plan:
+Each repository has its own OpenTofu root in `yutakobayashidev/tofu-configuration`,
+and CI creates the repository when that root is merged. Dispatch the workflow
+that writes the root and opens the pull request:
 
 ```bash
-root=infra/services/github/repositories/<project_name>
-tofu -chdir="$root" init
-tofu -chdir="$root" plan -out=tfplan
+gh workflow run github-new-repository.yml --repo yutakobayashidev/tofu-configuration \
+  -f name=<project_name> -f description="<description>" -f visibility=<visibility>
 ```
 
-The plan creates exactly three resources: the repository, its default branch,
-and its vulnerability alerts. Show it to the user and apply after they approve:
+The root calls the shared repo kit module. Its defaults are the recommended
+settings (squash merge only, branch deletion on merge, Dependabot alerts). For a
+public repository, its ruleset makes `main` accept only pull requests that pass
+`ci-gate`, with no required approval. GitHub Free has no rulesets for private
+repositories, so a private root sets `default_branch_ruleset = null` and
+`ci-gate` stays advisory. The pull request's branch is `new-repository/<project_name>`;
+find it with:
 
 ```bash
-tofu -chdir="$root" apply tfplan
-rm "$root/tfplan"
+gh pr list --repo yutakobayashidev/tofu-configuration --head new-repository/<project_name> --json url
 ```
 
-Commit the root and land it on `main` through tofu-configuration's normal
-workflow. The step is done when the repository answers:
+When the user asks for a setting that differs from the defaults, check out that
+branch from tofu-configuration (locate it with `ghq list -p`, or `ghq get` it),
+add the setting to a `general` block in
+`infra/services/github/repositories/<project_name>/module_gh_repo_kit.tf`, e.g.
+`general = { has_wiki = true }`, and push. The module README lists the fields.
+Requested settings the module does not expose, such as GitHub Pages, become
+manual follow-ups in the summary.
+
+## 3. Review the Plan and Merge
+
+The workflow dispatches github-plan for the branch, and every later push to it
+runs github-plan again. Wait for the latest run:
+
+```bash
+gh run list --repo yutakobayashidev/tofu-configuration --workflow github-plan.yml \
+  --branch new-repository/<project_name> --limit 1 --json databaseId,status,conclusion
+gh run watch <run_id> --repo yutakobayashidev/tofu-configuration --exit-status
+```
+
+The plan, in the run summary, creates exactly four resources: the repository,
+its default branch, its vulnerability alerts, and its ruleset. Show it to the
+user and merge after they approve:
+
+```bash
+gh pr merge <pr_url> --squash --delete-branch
+```
+
+The merge starts github-apply, which creates the repository. Watch its run the
+same way (`--workflow github-apply.yml --branch main`). The step is done when
+the apply succeeds and the repository answers:
 
 ```bash
 gh repo view yutakobayashidev/<project_name> --json url,defaultBranchRef
 ```
 
-If credentials are missing or the apply fails, report that status and resume
-after the user resolves it.
+The apply App created the repository, so only its installation includes it.
+Ask the user to add the repository to the plan App's installation: open
+<https://github.com/settings/installations>, choose **Configure** on
+`yuta-tofu-plan`, and add it under **Repository access**. Until then,
+github-plan fails for this root with a 422 when it requests a token scoped to
+the repository.
+
+If a run fails, report the failing step from its log and resume after the user
+resolves it.
 
 ## 4. Clone via ghq
 
@@ -175,15 +180,30 @@ Then run `$gha-lint` on `ci.yml`: it lints the workflow and onboards its actions
 to `.github/workflows/actions.lock`. The step is done when `nix flake check`
 passes locally and every `$gha-lint` check passes.
 
-## 8. Initial Commit
+## 8. Land the First Commit Through a Pull Request
 
-Stage all files and create an initial commit:
+For a public repository, the ruleset rejects direct pushes to `main`, and
+`ci-gate` must pass before a merge. Use the same pull request flow for a private
+repository so `ci-gate` still runs. Open the scaffolding as a pull request:
 
 ```bash
+git switch -c init
 git add -A
 git commit -m "feat: init <project_name> with <toolchain> flake"
-git push -u origin main
+git push -u origin init
+gh pr create --fill --base main
+gh pr checks --watch
 ```
+
+Merge once `ci-gate` passes, then sync `main`:
+
+```bash
+gh pr merge --squash --delete-branch
+git switch main
+git pull --ff-only
+```
+
+When `ci-gate` fails, fix the cause on the `init` branch and push again.
 
 ## 9. Summary
 
@@ -193,8 +213,10 @@ Print the final result:
 - Local path
 - Toolchain and license used
 - Worktree install hook added, or why none was needed
-- CI gate workflow path, and that `ci-gate` is not yet a required check on
-  `main` (the root sets `default_branch_ruleset = null`)
+- tofu-configuration pull request URL and the CI gate workflow path. For a
+  public repository, `main` requires pull requests that pass `ci-gate`; for a
+  private one, `ci-gate` is advisory because GitHub Free has no rulesets there
+- Whether the repository was added to the `yuta-tofu-plan` installation
 - Manual follow-ups for requested settings the module does not expose
 
 ## 10. Hand Off to Domain Modeling
