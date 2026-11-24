@@ -1,18 +1,18 @@
 ---
 name: gha-lint
-description: Lint and secure GitHub Actions workflows with jactionlint, gh actions-lock, ghalint, and zizmor. Use when adding, updating, or reviewing workflows, maintaining actions.lock, or choosing lockfiles versus SHA pinning with pinact.
+description: Lint and secure GitHub Actions workflows with jactionlint, gh actions-lock, pinact, ghalint, and zizmor. Use when adding, updating, or reviewing workflows, maintaining actions.lock, or pinning refs the lockfile does not cover with pinact.
 user-invocable: true
 ---
 
 # GitHub Actions Lint & Security
 
-Static analysis and security checking tools for GitHub Actions workflows. Use jactionlint for workflow correctness, gh actions-lock for action dependency locking, and ghalint / zizmor for security checks. pinact is optional for references that still need inline SHA pins. Some checks overlap. jactionlint is available in nixos-unstable; the explicit flake reference below also works when the local `nixpkgs` registry points to an older revision without it.
+Static analysis and security checking tools for GitHub Actions workflows. Use jactionlint for workflow correctness, gh actions-lock for action dependency locking, pinact for SHA pins on refs the lockfile does not cover, and ghalint / zizmor for security checks. Some checks overlap. jactionlint is available in nixos-unstable; the explicit flake reference below also works when the local `nixpkgs` registry points to an older revision without it.
 
 | Tool           | Purpose                         | Nix package          |
 | -------------- | ------------------------------- | -------------------- |
 | **jactionlint** | Workflow syntax and type checking | `github:NixOS/nixpkgs/nixos-unstable#jactionlint` |
 | **gh actions-lock** | Generate and verify action lockfiles | `gh extension install github/gh-actions-lock` |
-| **pinact** (optional) | Maintain inline SHA pins where needed | `nixpkgs#pinact` |
+| **pinact**     | SHA-pin refs the lockfile does not cover | `nixpkgs#pinact` |
 | **ghalint**    | Security best practices         | `nixpkgs#ghalint`    |
 | **zizmor**     | Security vulnerability analysis | `nixpkgs#zizmor`     |
 
@@ -80,38 +80,49 @@ before running the full check, or scope local verification during rollout.
   tag-only allowlist entry may no longer match. Do not silently broaden permissions
   or activate repository-wide enforcement as part of a workflow edit.
 
-### Coverage and the remaining role of pinact
+### Coverage and the role of pinact
 
 For onboarded workflows, the runner uses the locked commits for remote actions,
-including transitive action dependencies. Their YAML `uses:` may retain readable
-tags; inline SHA pinning and a blanket `pinact --check` are no longer required.
-Do not replace existing SHA pins with tags just for appearance.
+including transitive action dependencies. Their YAML `uses:` keeps readable tags;
+`gh actions-lock` rewrites SHA refs in onboarded workflows back to tags.
 
-Coverage has boundaries:
+pinact is required for everything the lockfile does not pin. Each of these needs a
+full commit SHA with a version comment:
 
-- Remote reusable workflows at `jobs.<id>.uses` still need full commit SHAs. Their
-  internal actions use the called repository's lockfile, not the caller's.
-- Container images (including `docker://`, job containers, and services) still need
-  digest pins. The action lockfile does not lock them.
+- Remote reusable workflows at `jobs.<id>.uses`. Their internal actions use the
+  called repository's lockfile, not the caller's.
+- Action definitions (`action.yml` / `action.yaml`), including composite actions.
+  Callers of a public action may not use a lockfile.
+- Every ref in workflows not yet onboarded to `actions.lock`.
+
+Two more boundaries sit outside both tools:
+
+- Container images (including `docker://`, job containers, and services) need
+  digest pins.
 - `./` actions run from the checked-out workspace and are not traversed. For actions
   using other actions, review whether migrating to `$/` is appropriate, then use
   `gh actions-lock --migrate-local-actions`. `$/` runs the repository action at the
   workflow commit; it is not equivalent when checkout selects another ref or when
   previous steps generate/modify the action. Do not routinely bypass this with
   `--ignore-local-actions`.
-- Workflows not yet onboarded still need inline SHA pinning. Keep pinact for these,
-  reusable workflow references, or an explicit repository policy requiring inline
-  pins. It does not generate or verify `actions.lock`. Public composite action
-  definitions may also need inline pins because their callers may not use locks.
 
-The [pinact lockfile guide](https://github.com/suzuki-shunsuke/pinact/blob/main/docs/workflow_lockfile.md)
-describes lock-aware versions: they leave actions locked for that workflow alone,
-pin reusable workflows and action definitions, and fail if an onboarded workflow
-has an action missing from its lock. Do not assume this behavior in older binaries:
-as checked on November 1, 2026, the guide is on `main`, while release v5.0.2 lacks
-it. Check the installed version's documentation before using blanket pinact checks
-in a mixed workflow. With an older version, target non-onboarded files; manually
-pin reusable-workflow calls in mixed files without rewriting locked action tags.
+pinact v5.0.2 does not read the lockfile: a blanket `pinact run --check` fails on
+the locked tags. Scope it the way the shared CI workflow does:
+
+```bash
+# Reusable workflow calls in every workflow
+pinact run --check --verify-comment --include '.*/\.github/workflows/.*'
+# Action definitions
+pinact run --check --verify-comment .github/actions/setup/action.yml
+# A workflow not yet onboarded
+pinact run --check --verify-comment .github/workflows/legacy.yml
+```
+
+Run `pinact run` (without `--check`) on the same targets to pin them. The
+[pinact lockfile guide](https://github.com/suzuki-shunsuke/pinact/blob/main/docs/workflow_lockfile.md)
+describes a lock-aware pinact that skips locked actions and pins the rest; it is on
+`main` but not in a release as of November 25, 2026. Once released, a blanket
+`pinact run --check` replaces the scoped commands.
 
 Keep other lint/security checks. ghalint v1.6.0 adds lockfile support; zizmor v1.32.0
 adds experimental support. Check the installed versions, including Nix packages,
@@ -192,10 +203,10 @@ See the [upstream migration guide](https://github.com/jdx/jactionlint/blob/v2.3.
 
 ---
 
-## pinact (optional inline pinning)
+## pinact
 
-Use only where the coverage rules above call for inline SHA pins. It updates
-workflow references, not the action lockfile. After changing a reference in an
+Pin the targets listed in [Coverage and the role of pinact](#coverage-and-the-role-of-pinact).
+It updates workflow references, not the action lockfile. After changing a reference in an
 onboarded workflow, regenerate and verify the lockfile too.
 
 ### Configuration
@@ -271,18 +282,6 @@ python3 skills/gha-lint/scripts/github_release_notes.py actions/checkout --from 
 | `--exclude, -e`                      | Exclude targets by regex                                              |
 | `--min-age, -m`                      | Skip releases newer than N days (use with `-u`)                       |
 
-### CI Usage
-
-Only for repositories that require inline SHA pins throughout, use
-`suzuki-shunsuke/pinact-action`. Do not add a blanket pinact job to a lockfile-based
-repository:
-
-```yaml
-- uses: suzuki-shunsuke/pinact-action@1081f5ad49ac904b7d977784f338145150a32112 # v1.4.0
-  with:
-    skip_push: "true"
-```
-
 ---
 
 ## ghalint
@@ -353,8 +352,8 @@ nix run nixpkgs#zizmor -- --format sarif .
 ## CI: shared workflow
 
 CI runs through [zunoser/reusable-workflows](https://github.com/zunoser/reusable-workflows):
-`gh actions-lock --verify`, jactionlint (`correctness`), ghalint and zizmor in one
-job. Tool versions and checksums live there; update that repository and release it
+`gh actions-lock --verify`, scoped pinact, jactionlint (`correctness`), ghalint and
+zizmor in one job. Tool versions and checksums live there; update that repository and release it
 instead of copying lint steps into callers.
 
 Add or keep this caller as `.github/workflows/ci.yml`. Take the SHA of the latest
@@ -379,7 +378,8 @@ jobs:
 ```
 
 - A repository whose workflows are not yet onboarded to `actions.lock` passes
-  `with: { verify-actions-lock: false }` until onboarding is complete.
+  `with: { verify-actions-lock: false }` until onboarding is complete; pinact then
+  requires a SHA pin on every ref.
 - Replace an existing inline lint job (jactionlint / ghalint / zizmor steps) with
   this call. Keep the repository's other CI jobs and triggers.
 - Dependabot's `github-actions` ecosystem opens PRs for new releases of the shared
@@ -390,14 +390,15 @@ jobs:
 
 ## Workflow: When Adding or Modifying GitHub Actions
 
-1. Edit workflows or composite actions. Pin reusable workflows and images separately.
+1. Edit workflows or composite actions. Pin container images by digest.
 2. Generate/update the action lockfile for the affected workflows, review the full
-   diff, and verify it. Use pinact only for references still requiring inline pins.
+   diff, and verify it. Then run pinact on the refs the lockfile does not cover.
 3. Run the correctness and security checks:
 
 ```bash
 nix run github:NixOS/nixpkgs/nixos-unstable#jactionlint -- --profile correctness
 gh actions-lock --verify
+nix run nixpkgs#pinact -- run --check --verify-comment --include '.*/\.github/workflows/.*'
 nix run nixpkgs#ghalint -- run
 nix run nixpkgs#zizmor -- .
 ```
