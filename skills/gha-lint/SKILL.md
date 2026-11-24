@@ -91,9 +91,15 @@ full commit SHA with a version comment:
 
 - Remote reusable workflows at `jobs.<id>.uses`. Their internal actions use the
   called repository's lockfile, not the caller's.
-- Action definitions (`action.yml` / `action.yaml`), including composite actions.
-  Callers of a public action may not use a lockfile.
+- Action definitions that other repositories can call, such as a root
+  `action.yml`. Their callers may not use a lockfile.
 - Every ref in workflows not yet onboarded to `actions.lock`.
+
+Local actions under `.github/actions/` called as `$/` are the opposite case: the
+caller's lockfile pins their refs, and `gh actions-lock` rewrites them to tags.
+Keep those tags. A SHA there no longer matches the lock entry, and the runner
+rejects the workflow; `gh actions-lock` v0.4.1 `--verify` misses this, while
+v0.5.1 reports `lockfile missing pin`. Verify with the version CI uses.
 
 Two more boundaries sit outside both tools:
 
@@ -112,8 +118,8 @@ the locked tags. Scope it the way the shared CI workflow does:
 ```bash
 # Reusable workflow calls in every workflow
 pinact run --check --verify-comment --include '.*/\.github/workflows/.*'
-# Action definitions
-pinact run --check --verify-comment .github/actions/setup/action.yml
+# Action definitions that other repositories call
+pinact run --check --verify-comment action.yml
 # A workflow not yet onboarded
 pinact run --check --verify-comment .github/workflows/legacy.yml
 ```
@@ -226,7 +232,7 @@ Initialize: `nix run nixpkgs#pinact -- init`
 # Pin a workflow that still requires inline SHA references
 nix run nixpkgs#pinact -- run .github/workflows/legacy.yml
 
-# Include composite actions etc.
+# Composite actions in a repository without actions.lock
 nix run nixpkgs#pinact -- run \
   .github/actions/setup-nix/action.yaml \
   .github/actions/setup-git-bot/action.yaml
