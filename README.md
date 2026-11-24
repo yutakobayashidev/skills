@@ -26,6 +26,7 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 | [trend-daily](skills/trend-daily)                                       | Collect daily trends from Radar OPML feeds, Hatena, HN, Lobsters, and GitHub |
 | [nextjs-onboarding](skills/nextjs-onboarding)                           | Audit baseline repo hygiene when joining a Next.js project       |
 | [nix-cache-optimize](skills/nix-cache-optimize)                       | Reduce source builds with verified nixpkgs and binary-cache coverage |
+| [octo-sts](skills/octo-sts) | Use short-lived GitHub App tokens in Actions via Octo STS |
 | [oura-daily-watch](skills/oura-daily-watch)                             | Build and run a daily Oura + Discord behavior monitor            |
 | [social-digest](skills/social-digest)                                   | Fetch and summarize Discord + Mastodon posts                     |
 | [speakerdeck](skills/speakerdeck)                                       | Download slide images from a SpeakerDeck presentation            |
