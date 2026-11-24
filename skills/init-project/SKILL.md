@@ -22,13 +22,26 @@ New repository setup:
 ## 2. Open the Repository Pull Request
 
 Each repository has its own OpenTofu root in `yutakobayashidev/tofu-configuration`,
-and CI creates the repository when that root is merged. Dispatch the workflow
-that writes the root and opens the pull request:
+and CI creates the repository when that root is merged. First confirm the name
+is free; stop and ask for another name if this prints a repository:
+
+```bash
+gh repo view yutakobayashidev/<project_name> --json url 2>/dev/null
+```
+
+Dispatch the workflow that writes the root and opens the pull request.
+`gh workflow run` returns no run ID, so find the run it started and wait for it:
 
 ```bash
 gh workflow run github-new-repository.yml --repo yutakobayashidev/tofu-configuration \
   -f name=<project_name> -f description="<description>" -f visibility=<visibility>
+gh run list --repo yutakobayashidev/tofu-configuration --workflow github-new-repository.yml \
+  --event workflow_dispatch --limit 1 --json databaseId,status,createdAt
+gh run watch <run_id> --repo yutakobayashidev/tofu-configuration --exit-status
 ```
+
+The run may take a few seconds to appear; repeat `gh run list` until one
+created after the dispatch is listed.
 
 The root calls the shared repo kit module. Its defaults are the recommended
 settings (squash merge only, branch deletion on merge, Dependabot alerts). For a
@@ -36,7 +49,7 @@ public repository, its ruleset makes `main` accept only pull requests that pass
 `ci-gate`, with no required approval. GitHub Free has no rulesets for private
 repositories, so a private root sets `default_branch_ruleset = null` and
 `ci-gate` stays advisory. The pull request's branch is `new-repository/<project_name>`;
-find it with:
+once the run succeeds, find it with:
 
 ```bash
 gh pr list --repo yutakobayashidev/tofu-configuration --head new-repository/<project_name> --json url
@@ -77,12 +90,9 @@ the apply succeeds and the repository answers:
 gh repo view yutakobayashidev/<project_name> --json url,defaultBranchRef
 ```
 
-The apply App created the repository, so only its installation includes it.
-Ask the user to add the repository to the plan App's installation: open
-<https://github.com/settings/installations>, choose **Configure** on
-`yuta-tofu-plan`, and add it under **Repository access**. Until then,
-github-plan fails for this root with a 422 when it requests a token scoped to
-the repository.
+github-apply also adds the new repository to the `yuta-tofu-plan` installation,
+so later pull requests for this root can plan. If that step failed, github-plan
+fails for this root with a 422; report it with the apply log.
 
 If a run fails, report the failing step from its log and resume after the user
 resolves it.
@@ -94,24 +104,32 @@ ghq get yutakobayashidev/<project_name>
 cd "$(ghq root)/github.com/yutakobayashidev/<project_name>"
 ```
 
-GitHub creates the repository with only a README, so add the license and
-`.gitignore` from GitHub's templates:
-
-```bash
-gh api licenses/<license> --jq .body > LICENSE
-gh api gitignore/templates/<Gitignore_template> --jq .source > .gitignore
-```
-
-- In `LICENSE`, replace `[year]` and `[fullname]`, when present, with the
-  current year and `gh api user --jq '.name // .login'`.
-- Map the toolchain to the closest gitignore template name, e.g. go -> Go,
-  rust -> Rust, python -> Python, node -> Node. When none matches, skip
-  `.gitignore`.
-
 ## 5. Init Nix Flake from dev-templates
+
+Initialize the flake first: `nix flake init` refuses to overwrite existing
+files, and some templates ship their own `.gitignore`.
 
 ```bash
 nix flake init -t github:the-nix-way/dev-templates#<toolchain>
+```
+
+GitHub creates the repository with only a README. Add the license:
+
+```bash
+gh api licenses/<license> --jq .body > LICENSE
+```
+
+In `LICENSE`, replace `[year]` and `[fullname]`, when present, with the current
+year and `gh api user --jq '.name // .login'`.
+
+Keep any `.gitignore` the template wrote, and append the Nix entries it lacks so
+that `git add -A` in step 8 does not commit them:
+
+```bash
+touch .gitignore
+for entry in .direnv/ result; do
+  grep -qxF "$entry" .gitignore || echo "$entry" >> .gitignore
+done
 ```
 
 ## 6. Configure the Worktree Dependency Hook
@@ -193,6 +211,7 @@ Action refs stay as tags: `gh actions-lock` pins them to commits in
 commit SHA, because the lockfile does not pin `jobs.<id>.uses`.
 
 Then run `gh actions-lock` to create the lockfile and commit it with `ci.yml`.
+`nix flake check` writes `flake.lock`; commit it too.
 The step is done when `nix flake check` passes locally and `gh actions-lock
 --verify` passes; the `gha-lint` job runs the remaining checks on the pull
 request. See `$gha-lint` for the lockfile rules.
@@ -211,6 +230,10 @@ git push -u origin init
 gh pr create --fill --base main
 gh pr checks --watch
 ```
+
+Right after the pull request opens, `gh pr checks --watch` can exit with "no
+checks reported" before the workflows register. Wait a few seconds and run it
+again until it reports `ci-gate`.
 
 Merge once `ci-gate` passes, then sync `main`:
 
@@ -233,7 +256,7 @@ Print the final result:
 - tofu-configuration pull request URL and the CI gate workflow path. For a
   public repository, `main` requires pull requests that pass `ci-gate`; for a
   private one, `ci-gate` is advisory because GitHub Free has no rulesets there
-- Whether the repository was added to the `yuta-tofu-plan` installation
+- Whether github-apply added the repository to the `yuta-tofu-plan` installation
 - Manual follow-ups for requested settings the module does not expose
 
 ## 10. Hand Off to Domain Modeling
