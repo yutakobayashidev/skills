@@ -139,7 +139,9 @@ first and append the command only if it is absent.
 Create `.github/workflows/ci.yml` in the new repository. It runs on every pull
 request and push to `main` and ends in one aggregate job, `ci-gate`: the single
 check that branch rules and agents wait on. New jobs join the gate through its
-`needs` list, so the check name stays stable.
+`needs` list, so the check name stays stable. `gha-lint` calls the shared
+[zunoser/reusable-workflows](https://github.com/zunoser/reusable-workflows) lint;
+take the commit SHA of its latest release.
 
 ```yaml
 name: CI
@@ -158,21 +160,26 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
       - name: Install Nix
-        uses: nixbuild/nix-quick-install-action@9f63be77f412a248c9d9a65a4c82cf066cdf8f0c # v35
+        uses: nixbuild/nix-quick-install-action@v35
         with:
           github_access_token: ${{ github.token }}
           nix_conf: |
             access-tokens = github.com=${{ github.token }}
       - run: nix flake check
 
+  gha-lint:
+    permissions:
+      contents: read
+    uses: zunoser/reusable-workflows/.github/workflows/gha-lint.yml@9fca6ff223f82d81b1d003fa5cfac0794fad78a7 # v1.3.0
+
   # Add every new job to `needs`.
   ci-gate:
     if: always()
-    needs: [flake-check]
+    needs: [flake-check, gha-lint]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions: {}
@@ -181,9 +188,14 @@ jobs:
         run: exit 1
 ```
 
-Then run `$gha-lint` on `ci.yml`: it lints the workflow and onboards its actions
-to `.github/workflows/actions.lock`. The step is done when `nix flake check`
-passes locally and every `$gha-lint` check passes.
+Action refs stay as tags: `gh actions-lock` pins them to commits in
+`.github/workflows/actions.lock`. The reusable workflow call needs its full
+commit SHA, because the lockfile does not pin `jobs.<id>.uses`.
+
+Then run `gh actions-lock` to create the lockfile and commit it with `ci.yml`.
+The step is done when `nix flake check` passes locally and `gh actions-lock
+--verify` passes; the `gha-lint` job runs the remaining checks on the pull
+request. See `$gha-lint` for the lockfile rules.
 
 ## 8. Land the First Commit Through a Pull Request
 
