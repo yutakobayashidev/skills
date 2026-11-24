@@ -30,18 +30,22 @@ gh repo view yutakobayashidev/<project_name> --json url 2>/dev/null
 ```
 
 Dispatch the workflow that writes the root and opens the pull request.
-`gh workflow run` returns no run ID, so find the run it started and wait for it:
+`gh workflow run` returns no run ID, and another dispatch may run at the same
+time. Record the time just before dispatching, then take the earliest run
+created after it:
 
 ```bash
+since=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 gh workflow run github-new-repository.yml --repo yutakobayashidev/tofu-configuration \
   -f name=<project_name> -f description="<description>" -f visibility=<visibility>
 gh run list --repo yutakobayashidev/tofu-configuration --workflow github-new-repository.yml \
-  --event workflow_dispatch --limit 1 --json databaseId,status,createdAt
+  --event workflow_dispatch --limit 10 --json databaseId,createdAt \
+  --jq "[.[] | select(.createdAt >= \"$since\")] | last | .databaseId"
 gh run watch <run_id> --repo yutakobayashidev/tofu-configuration --exit-status
 ```
 
-The run may take a few seconds to appear; repeat `gh run list` until one
-created after the dispatch is listed.
+The run may take a few seconds to appear; repeat `gh run list` until it prints
+an ID.
 
 The root calls the shared repo kit module. Its defaults are the recommended
 settings (squash merge only, branch deletion on merge, Dependabot alerts). For a
@@ -74,17 +78,27 @@ gh run list --repo yutakobayashidev/tofu-configuration --workflow github-plan.ym
 gh run watch <run_id> --repo yutakobayashidev/tofu-configuration --exit-status
 ```
 
-The plan, in the run summary, creates exactly four resources: the repository,
-its default branch, its vulnerability alerts, and its ruleset. Show it to the
-user and merge after they approve:
+The plan, in the run summary, creates the repository, its default branch, its
+vulnerability alerts, and its Actions permissions (SHA pinning required). A
+public repository adds its ruleset, for five resources; a private one has no
+ruleset, for four. Any other count is wrong: report it instead of merging. Show the plan to the user and merge after they
+approve:
 
 ```bash
 gh pr merge <pr_url> --squash --delete-branch
 ```
 
-The merge starts github-apply, which creates the repository. Watch its run the
-same way (`--workflow github-apply.yml --branch main`). The step is done when
-the apply succeeds and the repository answers:
+The merge starts github-apply, which creates the repository. Other merges to
+`main` also start github-apply, so find the run by the merge commit:
+
+```bash
+sha=$(gh pr view <pr_url> --repo yutakobayashidev/tofu-configuration --json mergeCommit --jq .mergeCommit.oid)
+gh run list --repo yutakobayashidev/tofu-configuration --workflow github-apply.yml \
+  --commit "$sha" --event push --json databaseId --jq '.[0].databaseId'
+gh run watch <run_id> --repo yutakobayashidev/tofu-configuration --exit-status
+```
+
+The step is done when the apply succeeds and the repository answers:
 
 ```bash
 gh repo view yutakobayashidev/<project_name> --json url,defaultBranchRef
@@ -134,19 +148,21 @@ done
 
 ## 6. Configure the Worktree Dependency Hook
 
-From the new repository root, choose the install command using the selected
-template, its setup notes, and any project manifest or lockfile. Honor a package
-manager already declared by the project. For a Node project using pnpm, append:
+Add the install command for the toolchain now, guarded so it runs only once the
+manifest exists. A fresh flake has no `package.json`, and an unguarded
+`pnpm install` would fail in every new worktree until one is added. For `node`,
+append:
 
 ```bash
-git config --local --add wt.hook 'pnpm install'
+git config --local --add wt.hook 'if [ -f package.json ]; then pnpm install; fi'
 ```
 
-For a Bun project using Bun, append `bun install` the same way. If no package
-manager is declared, use pnpm for `node` and Bun for `bun` when the project has a
-`package.json`. For other templates, add the documented install command if the
-project has dependencies to install. Skip the hook for shell-only scaffolding
-without a dependency manifest.
+For `bun`, use `bun install` with the same guard. Honor a package manager the
+project already declares, such as a `packageManager` field or another lockfile.
+For other toolchains, guard the documented install command with its manifest,
+e.g. `Cargo.toml` for `cargo fetch` or `pyproject.toml` for the template's
+Python installer. Skip the hook only for toolchains without a dependency
+manager, such as shell-only scaffolding.
 
 The global `wt.hook` already handles `direnv allow`. Add only the install command
 to the repository's local Git config. Check `git config --local --get-all wt.hook`
@@ -158,8 +174,17 @@ Create `.github/workflows/ci.yml` in the new repository. It runs on every pull
 request and push to `main` and ends in one aggregate job, `ci-gate`: the single
 check that branch rules and agents wait on. New jobs join the gate through its
 `needs` list, so the check name stays stable. `gha-lint` calls the shared
-[zunoser/reusable-workflows](https://github.com/zunoser/reusable-workflows) lint;
-take the commit SHA of its latest release.
+[zunoser/reusable-workflows](https://github.com/zunoser/reusable-workflows) lint.
+
+Fill the placeholders with the latest releases; do not copy versions from an
+older repository:
+
+```bash
+gh release view --repo actions/checkout --json tagName --jq .tagName              # <checkout_tag>
+gh release view --repo nixbuild/nix-quick-install-action --json tagName --jq .tagName  # <nix_tag>
+tag=$(gh release view --repo zunoser/reusable-workflows --json tagName --jq .tagName)
+gh api "repos/zunoser/reusable-workflows/commits/$tag" --jq .sha                  # <lint_sha>, comment <lint_tag>
+```
 
 ```yaml
 name: CI
@@ -178,11 +203,11 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@<checkout_tag>
         with:
           persist-credentials: false
       - name: Install Nix
-        uses: nixbuild/nix-quick-install-action@v35
+        uses: nixbuild/nix-quick-install-action@<nix_tag>
         with:
           github_access_token: ${{ github.token }}
           nix_conf: |
@@ -192,7 +217,7 @@ jobs:
   gha-lint:
     permissions:
       contents: read
-    uses: zunoser/reusable-workflows/.github/workflows/gha-lint.yml@9fca6ff223f82d81b1d003fa5cfac0794fad78a7 # v1.3.0
+    uses: zunoser/reusable-workflows/.github/workflows/gha-lint.yml@<lint_sha> # <lint_tag>
 
   # Add every new job to `needs`.
   ci-gate:
@@ -210,8 +235,11 @@ Action refs stay as tags: `gh actions-lock` pins them to commits in
 `.github/workflows/actions.lock`. The reusable workflow call needs its full
 commit SHA, because the lockfile does not pin `jobs.<id>.uses`.
 
-Then run `gh actions-lock` to create the lockfile and commit it with `ci.yml`.
-`nix flake check` writes `flake.lock`; commit it too.
+Then run `gh actions-lock` to create the lockfile. Leave everything uncommitted:
+step 8 commits the scaffolding on the `init` branch, including `ci.yml`,
+`actions.lock`, and the `flake.lock` that `nix flake check` writes. A commit on
+`main` here would make the final `git pull --ff-only` fail after the squash
+merge.
 The step is done when `nix flake check` passes locally and `gh actions-lock
 --verify` passes; the `gha-lint` job runs the remaining checks on the pull
 request. See `$gha-lint` for the lockfile rules.
