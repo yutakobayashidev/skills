@@ -33,15 +33,13 @@ Workflow lockfiles became GA on October 28, 2026, including Team and Free plans.
 See the [GA announcement](https://github.blog/changelog/2026-10-28-github-actions-workflow-lockfiles-are-generally-available/)
 and [official setup guide](https://docs.github.com/en/actions/how-tos/secure-your-work/lock-workflow-dependencies).
 
-### Runtime enforcement and local verification
+### Runtime enforcement and verification
 
-GitHub automatically validates onboarded workflows at execution time: dependency
-coverage, locked commit provenance, and source repository identity. Rely on that
-runtime enforcement; adding `actions.lock` does not require a verification CI job.
-Run `gh actions-lock --verify` locally before committing. Add a verification CI
-job only when the user explicitly requests pre-merge lockfile checks; it can catch
-problems in scheduled or manual workflows before they run, but is not required to
-enable locking. Keep existing verification CI unless its removal is in scope.
+GitHub validates onboarded workflows at execution time: dependency coverage,
+locked commit provenance, and source repository identity. `gh actions-lock --verify`
+adds a pre-merge check, including `schedule` and `workflow_dispatch` workflows that
+a pull request never runs. The [shared CI workflow](#ci-shared-workflow) runs it;
+also run it locally before committing.
 
 ### Generate, review, verify
 
@@ -168,20 +166,6 @@ than resolving the moving branch on each run. No NUR package is needed.
 - Shell script issues via shellcheck and Python issues via pyflakes
 - Matrix inconsistencies, invalid glob patterns and runner labels
 - Deprecated commands and invalid local/composite actions
-
-### CI Usage
-
-Use the official action, pinned to a release commit:
-
-```yaml
-- uses: jdx/jactionlint@a65ab044e916760429068fe5794b8306abdfcbb9 # v2.3.0
-  with:
-    profile: correctness
-```
-
-The action defaults to the binary version it was released with. If the repository
-configures its own profile, omit the `profile` input. Inline script checks require
-shellcheck / pyflakes on the runner's PATH; the action does not install them.
 
 ### Configuration and Migration
 
@@ -322,30 +306,6 @@ nix run nixpkgs#ghalint -- run-action
 - `actions/checkout` without `persist-credentials: false`
 - Other security best practice violations
 
-### CI Usage
-
-Install via aqua:
-
-```yaml
-- uses: aquaproj/aqua-installer@11dd79b4e498d471a9385aa9fb7f62bb5f52a73c # v4.0.4
-  with:
-    aqua_version: v2.56.6
-- run: ghalint run
-  env:
-    GHALINT_LOG_COLOR: always
-```
-
-Requires `aqua.yaml` in the repository with ghalint registered:
-
-```yaml
-# aqua.yaml
-registries:
-  - type: standard
-    ref: v4.579.0
-packages:
-  - name: suzuki-shunsuke/ghalint@v1.6.0
-```
-
 ---
 
 ## zizmor
@@ -388,78 +348,43 @@ nix run nixpkgs#zizmor -- --format sarif .
 - Dangerous use of `pull_request_target`
 - Improper use of self-hosted runners
 
-### CI Usage
-
-Use `zizmorcore/zizmor-action`:
-
-```yaml
-- uses: zizmorcore/zizmor-action@0dce2577a4760a2749d8cfb7a84b7d5585ebcb7d # v0.5.0
-```
-
-With GitHub Advanced Security:
-
-```yaml
-- uses: zizmorcore/zizmor-action@0dce2577a4760a2749d8cfb7a84b7d5585ebcb7d # v0.5.0
-```
-
-Without Advanced Security:
-
-```yaml
-- uses: zizmorcore/zizmor-action@0dce2577a4760a2749d8cfb7a84b7d5585ebcb7d # v0.5.0
-  with:
-    advanced-security: false
-```
-
 ---
 
-## CI Integration: Linting
+## CI: shared workflow
 
-When CI linting is requested, the example below runs correctness and security
-checks. It keeps existing SHA pins; tags are also valid for locked actions.
-After adding or editing a workflow, regenerate and verify the lockfile locally.
-Lockfile adoption alone does not call for adding this CI workflow.
+CI runs through [zunoser/reusable-workflows](https://github.com/zunoser/reusable-workflows):
+`gh actions-lock --verify`, jactionlint (`correctness`), ghalint and zizmor in one
+job. Tool versions and checksums live there; update that repository and release it
+instead of copying lint steps into callers.
+
+Add or keep this caller as `.github/workflows/ci.yml`. Take the SHA of the latest
+[release](https://github.com/zunoser/reusable-workflows/releases), then run
+`gh actions-lock` so the lockfile registers the caller:
 
 ```yaml
-name: "CI: GitHub Actions lint"
+name: CI
 
 on:
   pull_request:
-  workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  push:
+    branches: [main]
 
 permissions: {}
 
 jobs:
   gha-lint:
-    runs-on: ubuntu-24.04-arm
-    timeout-minutes: 10
     permissions:
       contents: read
-      actions: read
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-
-      - uses: jdx/jactionlint@a65ab044e916760429068fe5794b8306abdfcbb9 # v2.3.0
-        with:
-          profile: correctness
-
-      - uses: aquaproj/aqua-installer@11dd79b4e498d471a9385aa9fb7f62bb5f52a73c # v4.0.4
-        with:
-          aqua_version: v2.56.6
-      - name: ghalint
-        run: ghalint run
-        env:
-          GHALINT_LOG_COLOR: always
-
-      - uses: zizmorcore/zizmor-action@0dce2577a4760a2749d8cfb7a84b7d5585ebcb7d # v0.5.0
-        with:
-          advanced-security: false
+    uses: zunoser/reusable-workflows/.github/workflows/gha-lint.yml@RELEASE_COMMIT_SHA # vX.Y.Z
 ```
+
+- A repository whose workflows are not yet onboarded to `actions.lock` passes
+  `with: { verify-actions-lock: false }` until onboarding is complete.
+- Replace an existing inline lint job (jactionlint / ghalint / zizmor steps) with
+  this call. Keep the repository's other CI jobs and triggers.
+- Dependabot's `github-actions` ecosystem opens PRs for new releases of the shared
+  workflow. Preserve an existing updater setup.
+- The check reports as `gha-lint / lint`. Use that name if it becomes a required check.
 
 ---
 
@@ -483,8 +408,8 @@ nix run nixpkgs#zizmor -- .
 git diff
 ```
 
-5. Open a PR and inspect the existing CI results. Apply the runtime-enforcement
-   policy above when deciding whether a verification CI job belongs in the change.
+5. Open a PR and inspect the CI results. Add the [shared CI workflow](#ci-shared-workflow)
+   if the repository does not call it yet.
 
 ## Notes
 

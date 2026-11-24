@@ -83,8 +83,9 @@ clones are reused. Record clone failures individually and continue with others.
 Apply gha-lint separately in each isolated worktree. First record baseline
 findings, then make the smallest relevant fixes and run the required checks again.
 Follow its actions.lock coverage and version guidance; do not invent a second
-pinning policy here. Follow its runtime-enforcement policy: perform lock
-verification locally rather than adding verification CI as part of the rollout.
+pinning policy here. Add or update the caller of gha-lint's shared CI workflow in
+each repository with workflows, so later lint changes reach every repository
+through a release of the shared workflow.
 Standalone action definitions may need linting even when
 there are no workflows to onboard to a lockfile.
 
