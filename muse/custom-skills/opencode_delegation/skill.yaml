@@ -1,0 +1,5 @@
+name: "opencode_delegation"
+title: "Delegate work from Muse to OpenCode"
+description: "Use for work that may belong in the personal workspace, need OpenCode research or a small change, or grow into a GitHub development task."
+category: "Work and knowledge"
+include_in_prompt: true
