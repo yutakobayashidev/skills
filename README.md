@@ -28,6 +28,7 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 | [nix-cache-optimize](skills/nix-cache-optimize)                       | Reduce source builds with verified nixpkgs and binary-cache coverage |
 | [octo-sts](skills/octo-sts) | Use short-lived GitHub App tokens in Actions via Octo STS |
 | [oura-daily-watch](skills/oura-daily-watch)                             | Build and run a daily Oura + Discord behavior monitor            |
+| [plan-feature](skills/plan-feature)                                    | Turn feature requests into implementation-ready Issue drafts     |
 | [social-digest](skills/social-digest)                                   | Fetch and summarize Discord + Mastodon posts                     |
 | [speakerdeck](skills/speakerdeck)                                       | Download slide images from a SpeakerDeck presentation            |
 | [terraform-toolchain](skills/terraform-toolchain)                       | Set up Terraform/OpenTofu Nix devShells and IaC scanners         |
@@ -36,6 +37,12 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 | [youtube-transcript](skills/youtube-transcript)                         | Extract transcripts from YouTube videos                          |
 
 ## Installation
+
+### Muse delegation
+
+Copy the [`opencode_delegation` folder](muse/custom-skills/opencode_delegation), including `playbooks/`, to `~/workspace/custom-skills/opencode_delegation/` on the Muse VM. This extends [nyanshiba's original Muse skill](https://github.com/nyanshiba/muse-tan/tree/main/workspace/custom-skills/opencode_delegation) and uses the existing OpenCode connection.
+
+Install [`plan-feature`](skills/plan-feature) on the OpenCode host via Agent Skills discovery. Muse handles the conversation, chooses a playbook and publishes authorized Issues. OpenCode reads the target repository and drafts the plan. herdr-symphony runs implementation and PR verification after the Project status changes.
 
 ### npx skills
 

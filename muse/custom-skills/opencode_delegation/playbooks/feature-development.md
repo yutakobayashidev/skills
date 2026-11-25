@@ -1,0 +1,8 @@
+# Feature development
+
+1. Resolve the target repository from the request and conversation. If creating a repository is an open decision, return that decision to the user. Once a new repository is authorized, run the existing `init-project` skill through a delegate with provisioning permissions and use the repository it creates.
+2. Delegate planning to OpenCode `plan` in the target checkout. Ask it to use the installed `plan-feature` skill. Give it the user's goal, relevant findings and links, settled decisions, and open questions. Bring blocking questions back to the user, then resume with their answers.
+3. Return the draft for discussion or publish it when authorized. Resolve the agreed repository and Project before writing through the configured GitHub connection. Preserve the goal, shareable evidence, accepted decisions, and acceptance checks. Match existing Issues by deliverable before creating or retrying. Create an Epic and link its sub-issues only when there are multiple deliverables. Record real execution dependencies with `Blocked by`.
+4. Put implementation Issues in `Todo` and return their links in the original Muse thread. Grouping Epics and decision-only Issues stay outside `Implement`. If publication is blocked or incomplete, report the missing step and any Issue URLs already created so the user can resume from them.
+
+The user moves a ready implementation Issue to `Implement`. herdr-symphony owns `Implement` and `Verify`, including the independent verdict on the PR. The user approves landing by moving the Issue from `In review` to `Merging`. When asked for progress, read the linked Issue and PR and report the current state, evidence, and any decision still needed.
