@@ -8,7 +8,6 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 | ----------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | [action-plan-daily](skills/action-plan-daily)                           | Turn Gmail and Slack into a focused daily action plan            |
 | [app-download](skills/app-download)                                   | Download Android and Apple app packages with apkeep and ipatool  |
-| [atuin-motive-salvage](skills/atuin-motive-salvage) | Recover user intent from Atuin Threads with verbatim citations |
 | [atuin-retro](skills/atuin-retro) | Feed all synchronized Atuin Threads into retro across machines and projects |
 | [audit-email-noise](skills/audit-email-noise)                           | Identify recurring low-value email and propose safe unsubscribes |
 | [babashka-nrepl](skills/babashka-nrepl)                                 | Write Babashka scripts with nREPL-driven development             |
@@ -24,6 +23,7 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 | [init-project](skills/init-project)                                     | Create a GitHub repository and initialize its dev environment    |
 | [manage-apps-script-failures](skills/manage-apps-script-failures)       | Triage and safely resolve Google Apps Script failures            |
 | [manage-project-issues](skills/manage-project-issues)                  | Manage GitHub Issues, dependencies, and Project status with gh   |
+| [motive-salvage](skills/motive-salvage)                                 | Recover user intent from Atuin Threads with verbatim citations    |
 | [trend-daily](skills/trend-daily)                                       | Collect daily trends from Radar OPML feeds, Hatena, HN, Lobsters, and GitHub |
 | [nextjs-onboarding](skills/nextjs-onboarding)                           | Audit baseline repo hygiene when joining a Next.js project       |
 | [nix-cache-optimize](skills/nix-cache-optimize)                       | Reduce source builds with verified nixpkgs and binary-cache coverage |

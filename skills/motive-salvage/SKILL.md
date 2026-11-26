@@ -1,5 +1,5 @@
 ---
-name: atuin-motive-salvage
+name: motive-salvage
 description: Atuin Threads の過去セッションから、ユーザーが機能を求めた理由・制約・訂正を原文と出典付きで取り出す。以前の依頼の意図や判断のきっかけを確認するときに使う。
 ---
 
