@@ -11,7 +11,7 @@ Use the authenticated `gh` available to OpenCode. Resolve the repository, issue,
 
 1. Reuse a linked Issue for the same deliverable. Search for a match before creating an Issue or retrying a write with an uncertain result. With `gh issue create` or `gh issue edit`, use `--body-file` for Markdown and preserve existing agent logs and unrelated fields.
 2. Use GitHub's native sub-issues for Epic membership. Use `Blocked by` only when one Issue cannot start until another is resolved. With `gh api`, add sub-issues through `POST repos/{owner}/{repo}/issues/{parent_number}/sub_issues` with `sub_issue_id`. Add a blocker through `POST repos/{owner}/{repo}/issues/{dependent_number}/dependencies/blocked_by` with `issue_id` for the prerequisite. Get numeric IDs from the Issues API's `id` field. Check links before retrying. [Sub-issues API](https://docs.github.com/en/rest/issues/sub-issues#add-sub-issue) · [Issue dependencies API](https://docs.github.com/en/rest/issues/issue-dependencies#add-a-dependency-an-issue-is-blocked-by)
-3. Use `gh project item-add` for missing Project items. On a Symphony board, set newly queued implementation Issues to `Todo`, including items left blank by an interrupted publication. Keep any later status already reached.
+3. Use `gh project item-add` for missing Project items. If the repository has no Project yet, return that before publishing, unless the user approved creating or linking one. On a Symphony board, set newly queued implementation Issues to `Todo`, including items left blank by an interrupted publication. Keep any later status already reached.
 
 ## ADRs and dependent Issues
 
