@@ -13,7 +13,7 @@ Start from the desired outcome and identify the target before selecting a checko
 
 Use `domain-modeling` on every feature plan, including new and existing repositories. Settle the terms, states, and rules relevant to the feature before repository provisioning or Issue decomposition. Reuse established definitions when they already cover the change. In a read-only session, keep proposed glossary entries and warranted ADRs as drafts.
 
-- Identify the behavior the user wants and the smallest independently verifiable change that delivers it.
+- Identify the behavior the user wants, then split the agreed scope into the smallest independently verifiable changes that together deliver it. Narrowing a feature limits its scope, not the number of Issues.
 - If an unresolved decision changes the implementation materially, return the question, available evidence, and what it blocks.
 - Name a small experiment when an observable result would resolve a design question. Include the exact result that would let the user decide.
 
@@ -25,4 +25,4 @@ Use these fields for each implementation Issue.
 - **Scope and decisions** — agreed behavior, open questions that affect delivery, and dependencies.
 - **Acceptance and evidence** — observable behavior, the relevant command or user flow, and the output or artifact that will prove it. Use commands supported by the checkout and identify any runtime or fixture still needed.
 
-Return the drafts and any blocking question to the caller. In a write-capable OpenCode run, commit authorized ADRs under `docs/adr/` using the repo convention or the format from `domain-modeling` and send them through the repo's PR flow. Give `manage-project-issues` the accepted ADR link on the default branch or the open decision Issue before publishing dependent work.
+Return drafts that cover the whole agreed scope, and any blocking question, to the caller. In a write-capable OpenCode run, commit authorized ADRs under `docs/adr/` using the repo convention or the format from `domain-modeling` and send them through the repo's PR flow. Give `manage-project-issues` the accepted ADR link on the default branch or the open decision Issue before publishing dependent work.

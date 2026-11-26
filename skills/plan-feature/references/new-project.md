@@ -5,4 +5,4 @@
 3. When `init-project` returns the absolute checkout path, move the original `plan` session there with OpenCode's built-in tool. Call `tools.opencode.session.move({ directory: checkoutPath })` through Code Mode's `execute`, or call `opencode_session_move` with the same directory when tools are exposed directly. Omit `sessionID` so the tool moves the current session.
 4. Let the move take effect before working in the checkout. Confirm the working directory in the same session, then check the proposed acceptance commands against the scaffold. If the move fails, return the error, goal, terms, agreed decisions, and open questions so the caller can resume planning in the checkout.
 
-Return to the Issue-drafting steps in `plan-feature` with the repository URL, decisions, and first deliverable.
+Return to the Issue-drafting steps in `plan-feature` with the repository URL, decisions, and the agreed scope of the first usable version. Draft Issues for that whole scope; it can take an Epic with several sub-issues.
