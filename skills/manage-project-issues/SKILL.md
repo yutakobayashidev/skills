@@ -11,7 +11,7 @@ Use the authenticated `gh` available to OpenCode. Resolve the repository and iss
 
 1. Reuse a linked Issue for the same deliverable. Search for a match before creating an Issue or retrying a write with an uncertain result. With `gh issue create` or `gh issue edit`, use `--body-file` for Markdown and preserve existing agent logs and unrelated fields.
 2. Use GitHub's native sub-issues for Epic membership. Use `Blocked by` only when one Issue cannot start until another is resolved. With `gh api`, add sub-issues through `POST repos/{owner}/{repo}/issues/{parent_number}/sub_issues` with `sub_issue_id`. Add a blocker through `POST repos/{owner}/{repo}/issues/{dependent_number}/dependencies/blocked_by` with `issue_id` for the prerequisite. Get numeric IDs from the Issues API's `id` field. Check links before retrying. [Sub-issues API](https://docs.github.com/en/rest/issues/sub-issues#add-sub-issue) · [Issue dependencies API](https://docs.github.com/en/rest/issues/issue-dependencies#add-a-dependency-an-issue-is-blocked-by)
-3. Use `gh project item-add` for implementation Issues missing from the Agent Work Queue. Keep Epics and decision-only Issues off it, because Symphony can start work on any item there. On a Symphony board, set newly queued implementation Issues to `Todo`, including items left blank by an interrupted publication. Keep any later status already reached.
+3. Use `gh project item-add` for implementation Issues missing from the Agent Work Queue. Keep Epics, decision Issues, and experiment Issues off it, because Symphony can start work on any item there. On a Symphony board, set newly queued implementation Issues to `Todo`, including items left blank by an interrupted publication. Keep any later status already reached.
 
 ## ADRs and dependent Issues
 
@@ -23,6 +23,6 @@ Use the authenticated `gh` available to OpenCode. Resolve the repository and iss
 
 Use `gh project item-edit --help` for the installed version. Where name-based editing is supported, pass the Project number, `--owner`, the Issue `--url`, `--field Status`, and `--value`. Otherwise resolve the item, Project, field, and option IDs first. [GitHub CLI manual](https://cli.github.com/manual/gh_project_item-edit)
 
-On a Symphony board, only move a ready implementation Issue with no open blockers to `Implement` when the user explicitly approves that Issue. Grouping Epics and decision-only Issues stay outside `Implement`. Move from `In review` to `Merging` only when the user explicitly approves landing that PR. Symphony owns implementation and its running, verification, and completion states.
+Move implementation Issues to `Implement` only with the user's explicit approval. One approval can cover several Issues, including ones with open blockers: the implement workflow waits until every `Blocked by` Issue is closed. Move from `In review` to `Merging` only when the user explicitly approves landing that PR. Symphony owns implementation and its running, verification, and completion states.
 
 Read back the final Issue URL, requested relationships, and Project status. If work is partial, return the persisted URLs and missing steps so a later run can resume from them.
