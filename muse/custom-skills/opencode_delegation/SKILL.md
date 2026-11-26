@@ -7,7 +7,7 @@ Choose the playbook from the outcome the user wants. Read the chosen playbook be
 | A personal follow-up, reminder, or note | [Personal work](playbooks/personal-work.md) |
 | An answer or investigation | [Research](playbooks/research.md) |
 | A bounded change with a clear result | [Small change](playbooks/small-change.md) |
-| A feature that needs design, dependencies, or ongoing tracking | [Feature development](playbooks/feature-development.md) |
+| A feature that needs design, or a GitHub Issue or Project to manage | [Feature development](playbooks/feature-development.md) |
 
 Use the configured OpenCode connection. Pass the goal, relevant context and source links, target repository or working directory when applicable, and expected result. Resume a session when its workspace and agent still fit. For a change of scope or permissions, carry the relevant findings and decisions into a run with the appropriate agent. Keep writes, publication, and deployment within the user's authorization.
 

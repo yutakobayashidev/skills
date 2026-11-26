@@ -23,6 +23,7 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 | [grok-search](skills/grok-search)                                       | Search real-time reactions and discussions on X with Grok        |
 | [init-project](skills/init-project)                                     | Create a GitHub repository and initialize its dev environment    |
 | [manage-apps-script-failures](skills/manage-apps-script-failures)       | Triage and safely resolve Google Apps Script failures            |
+| [manage-project-issues](skills/manage-project-issues)                  | Manage GitHub Issues, dependencies, and Project status with gh   |
 | [trend-daily](skills/trend-daily)                                       | Collect daily trends from Radar OPML feeds, Hatena, HN, Lobsters, and GitHub |
 | [nextjs-onboarding](skills/nextjs-onboarding)                           | Audit baseline repo hygiene when joining a Next.js project       |
 | [nix-cache-optimize](skills/nix-cache-optimize)                       | Reduce source builds with verified nixpkgs and binary-cache coverage |
@@ -42,7 +43,7 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 
 Copy the [`opencode_delegation` folder](muse/custom-skills/opencode_delegation), including `playbooks/`, to `~/workspace/custom-skills/opencode_delegation/` on the Muse VM. This extends [nyanshiba's original Muse skill](https://github.com/nyanshiba/muse-tan/tree/main/workspace/custom-skills/opencode_delegation) and uses the existing OpenCode connection.
 
-Install [`plan-feature`](skills/plan-feature) on the OpenCode host via Agent Skills discovery. Muse handles the conversation, chooses a playbook and publishes authorized Issues. OpenCode reads the target repository and drafts the plan. herdr-symphony runs implementation and PR verification after the Project status changes.
+Install [`plan-feature`](skills/plan-feature) and [`manage-project-issues`](skills/manage-project-issues) on the OpenCode host via Agent Skills discovery. Muse delegates and relays the user's decisions. OpenCode plans the feature with a required `domain-modeling` step, uses [`init-project`](skills/init-project) for approved new repositories, records accepted ADRs, and manages Issues and Projects with its authenticated `gh`. The same skills are available directly in OpenCode. herdr-symphony runs implementation and PR verification after the Project status changes.
 
 ### npx skills
 
