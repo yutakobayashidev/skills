@@ -287,9 +287,12 @@ Print the final result:
 - Whether github-apply added the repository to the `yuta-tofu-plan` installation
 - Manual follow-ups for requested settings the module does not expose
 
-## 10. Hand Off to Domain Modeling
+## 10. Resume Feature Planning
 
-After the summary, ask the user to open the new repository and invoke
-`$domain-modeling` to start defining the project's requirements and identifying
-decisions that warrant an ADR. Leave the modeling session to the user's next
-request.
+If an OpenCode planning session already has the project's requirements or
+domain decisions, return the new checkout to that session so it can resume
+with those decisions and the remaining questions.
+
+For a standalone setup, ask the user to open the new repository and invoke
+`$domain-modeling` to start defining its requirements and identifying decisions
+that warrant an ADR. Leave the modeling session to the user's next request.
