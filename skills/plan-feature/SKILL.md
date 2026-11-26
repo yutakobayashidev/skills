@@ -17,10 +17,11 @@ Use `domain-modeling` on every feature plan, including new and existing reposito
 - If an unresolved decision changes the implementation materially, return the question, available evidence, and what it blocks.
 - Name a small experiment when an observable result would resolve a design question. Include the exact result that would let the user decide.
 
-Draft one Issue for a bounded deliverable. For several deliverables, draft an Epic with its goal and sub-issues, each with its own acceptance checks. State which Issues truly depend on another Issue or a pending design decision, so the caller can add `Blocked by` in GitHub. Leave out deliverables already completed before publication and link their PRs in the Epic or Issue that builds on them.
+Draft one Issue for a bounded deliverable. For several deliverables, draft an Epic with its goal and sub-issues, each with its own type and acceptance checks. State which Issues truly depend on another Issue or a pending design decision, so the caller can add `Blocked by` in GitHub. Leave out deliverables already completed before publication and link their PRs in the Epic or Issue that builds on them.
 
-Use these fields for each implementation Issue.
+Use these fields for each Issue.
 
+- **Type** — epic, implementation, decision, or experiment. `manage-project-issues` decides board membership and status handling from it, so every draft carries one, including each sub-issue of an Epic.
 - **Goal and context** — the requested outcome, why it matters, and relevant source links or repository locations.
 - **Scope and decisions** — agreed behavior, open questions that affect delivery, and dependencies.
 - **Acceptance and evidence** — observable behavior, the relevant command or user flow, and the output or artifact that will prove it. Use commands supported by the checkout and identify any runtime or fixture still needed.
