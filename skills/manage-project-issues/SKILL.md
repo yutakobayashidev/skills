@@ -9,20 +9,21 @@ Use the authenticated `gh` available to OpenCode. Resolve the repository and iss
 
 ## Publish or update Issues
 
+For implementation work headed to the Agent Work Queue, verify the approved scope, behavior, acceptance criteria, and the direct and indirect prerequisites before publishing the batch. If a prerequisite is an unresolved decision or a required experiment whose result is still pending, return the batch to planning with the affected drafts and the missing answers. Before queueing an existing Issue, check that its blocker links match the approved requirements. Standalone decision and experiment Issues can track planning work when the user requests them.
+
 1. Reuse a linked Issue for the same deliverable. Search for a match before creating an Issue or retrying a write with an uncertain result. With `gh issue create` or `gh issue edit`, use `--body-file` for Markdown and preserve existing agent logs and unrelated fields.
 2. Use GitHub's native sub-issues for Epic membership. Use `Blocked by` only when one Issue cannot start until another is resolved. With `gh api`, add sub-issues through `POST repos/{owner}/{repo}/issues/{parent_number}/sub_issues` with `sub_issue_id`. Add a blocker through `POST repos/{owner}/{repo}/issues/{dependent_number}/dependencies/blocked_by` with `issue_id` for the prerequisite. Get numeric IDs from the Issues API's `id` field and pass them as integers with `gh api -F sub_issue_id=<id>` or `-F issue_id=<id>`; the API rejects them as strings from `-f`. Check links before retrying. [Sub-issues API](https://docs.github.com/en/rest/issues/sub-issues#add-sub-issue) · [Issue dependencies API](https://docs.github.com/en/rest/issues/issue-dependencies#add-a-dependency-an-issue-is-blocked-by)
 3. Use `gh project item-add` for Issues of type implementation missing from the Agent Work Queue. Read the type from the approved draft. Keep Epics, decision Issues, and experiment Issues off it, because Symphony can start work on any item there. On a Symphony board, set newly queued implementation Issues to `Todo`, including items left blank by an interrupted publication. Keep any later status already reached.
 
 ## ADRs and dependent Issues
 
-- Once a decision is settled, prefer landing its ADR PR on the default branch before creating dependent implementation Issues. Link the landed ADR in those Issues.
-- To track dependent work before the ADR lands, first create or reuse an open decision Issue. Create each sufficiently defined implementation Issue, link its `Blocked by` dependency, then put it in `Todo`. Keep work that still lacks a defined scope in the planning draft.
-- When the ADR PR tracks a decision Issue, reference it with `Refs #N`. After merge, read the accepted ADR on the default branch, link it in the decision Issue, and close the Issue when authorized.
+- Confirm the agreed behavior is recorded before publishing dependent implementation Issues. When an ADR is needed, verify it has landed on the default branch and link it in those Issues.
+- When an ADR PR tracks a decision Issue, reference it with `Refs #N`. After merge, read the accepted ADR on the default branch, link it in the decision Issue, and close the Issue when authorized. Verification of the implementation belongs in its own Issue's acceptance criteria.
 
 ## Change Project status
 
 Use `gh project item-edit --help` for the installed version. Where name-based editing is supported, pass the Project number, `--owner`, the Issue `--url`, `--field Status`, and `--value`. Otherwise resolve the item, Project, field, and option IDs first. [GitHub CLI manual](https://cli.github.com/manual/gh_project_item-edit)
 
-Move implementation Issues to `Implement` only with the user's explicit approval. One approval can cover several Issues, including ones with open blockers: the implement workflow waits until every `Blocked by` Issue is closed. Move from `In review` to `Merging` only when the user explicitly approves landing that PR. Symphony owns implementation and its running, verification, and completion states.
+Before moving an Issue to `Implement`, check its live dependency graph for any open decision or required experiment and return affected Issues to planning. Move the eligible Issues only with the user's explicit approval. One approval can cover several Issues with open implementation prerequisites. Symphony waits until those Issues close. Move from `In review` to `Merging` only when the user explicitly approves landing that PR. Symphony owns implementation and its running, verification, and completion states.
 
 Read back the final Issue URL, requested relationships, and Project status. If work is partial, return the persisted URLs and missing steps so a later run can resume from them.
