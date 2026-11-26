@@ -5,7 +5,11 @@ description: Plan a new project or feature, clarify its domain and decisions, an
 
 # Plan a feature
 
-Start from the desired outcome and the user's current decisions. For an existing repository, read its instructions, relevant code, tests, and glossary. For a new project, use [the new-project workflow](references/new-project.md) to plan before provisioning a repository.
+Start from the desired outcome and identify the target before selecting a checkout or drafting Issues.
+
+- If the user clearly wants a separate repository, use [the new-project workflow](references/new-project.md). Run `init-project` only after the user approves the proposed repository setup.
+- If the request or conversation identifies an existing target repository, use its checkout and read its instructions, relevant code, tests, and glossary.
+- If the choice between an existing repository and a new one is unclear and would change the plan, return one focused question and wait for the answer. For example, “Should this go in noren, or should it have its own repository?” Resume with the user's answer.
 
 Use `domain-modeling` on every feature plan, including new and existing repositories. Settle the terms, states, and rules relevant to the feature before repository provisioning or Issue decomposition. Reuse established definitions when they already cover the change. In a read-only session, keep proposed glossary entries and warranted ADRs as drafts.
 
