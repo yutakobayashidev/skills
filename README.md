@@ -6,7 +6,6 @@ Personal agent skills for AI coding assistants. These skills follow the [Agent S
 
 | Skill                                                                   | Description                                                      |
 | ----------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| [action-plan-daily](skills/action-plan-daily)                           | Turn Gmail and Slack into a focused daily action plan            |
 | [app-download](skills/app-download)                                   | Download Android and Apple app packages with apkeep and ipatool  |
 | [atuin-retro](skills/atuin-retro) | Feed all synchronized Atuin Threads into retro across machines and projects |
 | [audit-email-noise](skills/audit-email-noise)                           | Identify recurring low-value email and propose safe unsubscribes |
